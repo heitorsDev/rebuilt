@@ -8,6 +8,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.ResetMode;
 import com.revrobotics.PersistMode;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
@@ -18,9 +19,12 @@ public class Intake extends SubsystemBase {
     private ROLLER_STATES currentRollerState = ROLLER_STATES.OFF;
 
     public enum PIVOT_STATES {
-        DEFAULT, DROP
+        INSIDE, DROP
     }
-    private PIVOT_STATES currentPivotState = PIVOT_STATES.DEFAULT;
+
+
+    
+    private PIVOT_STATES currentPivotState = PIVOT_STATES.INSIDE;
 
   
     private SparkMax pivot = new SparkMax(IntakeConstants.pivot_id, MotorType.kBrushless);
@@ -59,7 +63,7 @@ public class Intake extends SubsystemBase {
                 break;
         }
         switch (currentPivotState) {
-            case DEFAULT:
+            case INSIDE:
                 pivotSP = IntakeConstants.defaultPivotSP;
                 break;
 
@@ -73,7 +77,10 @@ public class Intake extends SubsystemBase {
             SparkMax.ControlType.kPosition
         );
 
-
+        SmartDashboard.putNumber("Intake pivot position:", pivot.getAlternateEncoder().getPosition());
+        SmartDashboard.putString("Intake roller state: ", this.currentRollerState.name());
+        SmartDashboard.putString("Intake pivot state: ", this.currentPivotState.name());
+        SmartDashboard.putBoolean("Intake pivot at position:", this.atPosition());
     }
     double pivotSP = 0;
     public boolean atPosition(){
