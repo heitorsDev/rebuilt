@@ -5,18 +5,18 @@ import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.Intake.PIVOT_STATES;
 import frc.robot.subsystems.Intake.Intake.ROLLER_STATES;
 
-public class InsideIntake  extends Command {
+public class DropIntakeCommand extends Command {
     Intake intake;
 
-    public InsideIntake(Intake intake){
+    public DropIntakeCommand(Intake intake){
         this.intake = intake;
         addRequirements(intake);
     }
 
     @Override
     public void initialize() {
-        intake.setPivotState(PIVOT_STATES.INSIDE);
-        intake.setRollerState(ROLLER_STATES.OFF);
+        intake.setPivotState(PIVOT_STATES.DROP);
+        intake.setRollerState(ROLLER_STATES.ON);
     }
 
     @Override
@@ -31,5 +31,4 @@ public class InsideIntake  extends Command {
     public boolean isFinished() {
         return intake.atPosition();
     }
-    
 }
