@@ -77,7 +77,7 @@ public class Intake extends SubsystemBase {
             SparkMax.ControlType.kPosition
         );
 
-        SmartDashboard.putNumber("Intake pivot position:", pivot.getAlternateEncoder().getPosition());
+        SmartDashboard.putNumber("Intake pivot position:", pivot.getEncoder().getPosition());
         SmartDashboard.putString("Intake roller state: ", this.currentRollerState.name());
         SmartDashboard.putString("Intake pivot state: ", this.currentPivotState.name());
         SmartDashboard.putBoolean("Intake pivot at position:", this.atPosition());
