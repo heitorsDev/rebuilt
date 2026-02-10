@@ -79,7 +79,7 @@ public class Shooter extends SubsystemBase {
         return Math.abs(getVelocity() - targetRPM) < toleranceRPM;
     }
     public double distance = 0;
-    public void updateDistance(Alliance alliance){
+    private void updateDistance(Alliance alliance){
         Pose2d botPose = poseSupplier.get();
         Pose2d hubPose = new Pose2d();
         switch (alliance) {
@@ -97,13 +97,17 @@ public class Shooter extends SubsystemBase {
 
 
     }
-
+    private void updatePower(double distance){
+        setVelocity(ShooterConstants.RPMinterpolation.get(distance));
+    }
 
     @Override
     public void periodic() {
         updateDistance(DriverStation.getAlliance().get());
-
+        updatePower(this.distance);
 
         SmartDashboard.putNumber("Distance to hub", distance);
+        SmartDashboard.putNumber("Flywheel target RPM", ShooterConstants.RPMinterpolation.get(distance));
+        
     }
 }
