@@ -25,7 +25,11 @@ public class Shooter extends SubsystemBase {
 
     private double targetRPM = 0;
 
-
+    public enum SHOOTER_STATES{
+        DEFAULT,
+        TUNING
+    }
+    private SHOOTER_STATES currentShooterState = SHOOTER_STATES.TUNING;
 
     @SuppressWarnings({ "removal", "deprecation" })
     public Shooter(Supplier<Pose2d> poseSupplier) {
@@ -98,7 +102,16 @@ public class Shooter extends SubsystemBase {
 
     }
     private void updatePower(double distance){
-        setVelocity(ShooterConstants.RPMinterpolation.get(distance));
+            
+        switch (currentShooterState) {
+            case TUNING:
+                double tuningRPM = SmartDashboard.getNumber("Tuning RPM", 0);
+                setVelocity(tuningRPM);
+                break;
+            case DEFAULT:
+                setVelocity(ShooterConstants.RPMinterpolation.get(distance));
+                break;
+        }
     }
 
     @Override
