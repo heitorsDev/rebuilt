@@ -5,19 +5,31 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.ResetMode;
+
+import java.util.function.Supplier;
+
 import com.revrobotics.PersistMode;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
+
+    private Supplier<Pose2d> poseSupplier;
 
     private SparkFlex rightShooter = new SparkFlex(ShooterConstants.right_shooter_id, MotorType.kBrushless);
     private SparkFlex leftShooter = new SparkFlex(ShooterConstants.left_shooter_id, MotorType.kBrushless);
 
     private double targetRPM = 0;
 
+
+
     @SuppressWarnings({ "removal", "deprecation" })
-    public Shooter() {
+    public Shooter(Supplier<Pose2d> poseSupplier) {
+        this.poseSupplier = poseSupplier;
 
         SparkMaxConfig config = new SparkMaxConfig();
 
@@ -66,8 +78,32 @@ public class Shooter extends SubsystemBase {
     public boolean atSpeed(double toleranceRPM) {
         return Math.abs(getVelocity() - targetRPM) < toleranceRPM;
     }
+    public double distance = 0;
+    public void updateDistance(Alliance alliance){
+        Pose2d botPose = poseSupplier.get();
+        Pose2d hubPose = new Pose2d();
+        switch (alliance) {
+            case Red:
+                hubPose = ShooterConstants.redHubPose;
+                break;
+            case Blue:
+                hubPose = ShooterConstants.blueHubPose;
+                break;
+        }
+        
+        double dx = hubPose.getX()-botPose.getX();
+        double dy = hubPose.getY()-botPose.getY();
+        distance = Math.sqrt(Math.pow(dx, 2)+Math.pow(dy, 2));
+
+
+    }
+
 
     @Override
     public void periodic() {
+        updateDistance(DriverStation.getAlliance().get());
+
+
+        SmartDashboard.putNumber("Distance to hub", distance);
     }
 }
