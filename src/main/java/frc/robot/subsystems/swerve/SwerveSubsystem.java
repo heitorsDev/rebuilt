@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Meter;
 import java.io.File;
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -13,6 +14,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -34,6 +36,61 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 public class SwerveSubsystem extends SubsystemBase {
 
   private final SwerveDrive swerveDrive;
+
+  public enum DRIVING_STATES{
+    TELE,
+    AUTO,
+    AUTO_HEADING
+  }
+
+  
+
+  private DRIVING_STATES drivingState = DRIVING_STATES.TELE;
+  private Pose2d poseToAim = new Pose2d(0, 0, new Rotation2d(0));
+  
+  PIDController angularPID = new PIDController(0.1, 0, 0);
+  
+
+  public void aimToPose(Pose2d poseToAim){
+    this.poseToAim = poseToAim;
+    this.drivingState = DRIVING_STATES.AUTO_HEADING;
+  }
+
+  public void driveTeleop(double xSpeed, double ySpeed, double rot){
+    switch (drivingState){
+      case TELE:
+        this.drive(
+              ChassisSpeeds.fromFieldRelativeSpeeds(
+                  xSpeed ,
+                  ySpeed,
+                  rot,
+                  this.getHeading())
+          );
+        break;
+      case AUTO:
+        //faz algo pra se mexer 100% sozinho
+        break;
+      case AUTO_HEADING:
+        double angleToAim = 
+          Math.atan2(this.poseToAim.getY()-this.getPose().getY(), this.poseToAim.getX()-this.getPose().getX());
+        
+
+        this.drive(
+          ChassisSpeeds.fromFieldRelativeSpeeds(
+            xSpeed,
+            ySpeed,
+            angularPID.calculate(this.getHeading().getRadians(), angleToAim),
+            this.getHeading()
+            ));
+
+
+        //muda so o heading sozinho
+        break;
+      }
+    }
+
+
+
 
   public SwerveSubsystem() {
     this(new File(Filesystem.getDeployDirectory(), "swerve"));
@@ -173,8 +230,6 @@ public void setupPathPlanner()
   public ChassisSpeeds getRobotVelocity() {
     return swerveDrive.getRobotVelocity();
   }
-
-  /* ======================== DRIVE ======================== */
 
   public Command driveCommand(DoubleSupplier x,
       DoubleSupplier y,

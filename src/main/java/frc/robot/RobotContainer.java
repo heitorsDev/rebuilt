@@ -18,8 +18,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
 
-  private final CommandXboxController driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  private final CommandXboxController driverController = new CommandXboxController(
+      OperatorConstants.kDriverControllerPort);
   private final CommandXboxController opController = new CommandXboxController(1);
   private final Intake intake = new Intake();
   private final Indexer indexer = new Indexer();
@@ -39,19 +39,14 @@ public class RobotContainer {
           double ySpeed = -driverController.getLeftX();
           double rot = -driverController.getRightX();
 
-          swerve.drive(
-              ChassisSpeeds.fromFieldRelativeSpeeds(
-                  xSpeed * 4.5,
-                  ySpeed * 4.5,
-                  rot * 3.5,
-                  swerve.getHeading()));
+          swerve.driveTeleop(xSpeed * 4.5, ySpeed * 4.5, rot * 3.5);
         }, swerve));
 
     driverController.start().onTrue(Commands.runOnce(swerve::zeroGyro));
 
     driverController.rightBumper().onTrue(new DropIntakeCommand(intake));
     driverController.leftBumper().onTrue(new InsideIntakeCommand(intake));
-      
+
     driverController.a().onTrue(new IndexCommand(indexer));
     driverController.a().onFalse(new DeIndexCommand(indexer));
   }
@@ -60,4 +55,3 @@ public class RobotContainer {
     return swerve.getAutonomousCommand("B.classific.auto.lado(human)");
   }
 }
-
