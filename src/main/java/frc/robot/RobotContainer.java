@@ -12,6 +12,8 @@ import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,7 +30,15 @@ public class RobotContainer {
   private final SwerveSubsystem swerve = new SwerveSubsystem();
   private final Shooter shooter = new Shooter(swerve::getPose, opController::getRightY);
 
+
+
+
   public RobotContainer() {
+    NamedCommands.registerCommand("DropIntakeCommand", new DropIntakeCommand(intake));
+    NamedCommands.registerCommand("InsideIntakeCommand", new InsideIntakeCommand(intake));
+    NamedCommands.registerCommand("IndexCommand", new IndexCommand(indexer));
+    NamedCommands.registerCommand("DeIndexCommand", new DeIndexCommand(indexer));
+    
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
   }
