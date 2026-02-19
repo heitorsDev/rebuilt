@@ -1,52 +1,63 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.indexerCommands.IndexCommand;
 import frc.robot.commands.indexerCommands.DeIndexCommand;
-
 import frc.robot.commands.intakeCommands.DropIntakeCommand;
 import frc.robot.commands.intakeCommands.InsideIntakeCommand;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Indexer.Indexer;
 import frc.robot.subsystems.Intake.Intake;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.swerve.SwerveSubsystem;
 
-/**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and trigger mappings) should be declared here.
- */
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+
 public class RobotContainer {
 
+  private final CommandXboxController driverController =
+      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  private final CommandXboxController opController = new CommandXboxController(1);
   private final Intake intake = new Intake();
   private final Indexer indexer = new Indexer();
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  private final SwerveSubsystem swerve = new SwerveSubsystem();
+  private final Shooter shooter = new Shooter(swerve::getPose, opController::getRightY);
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureBindings();
+    DriverStation.silenceJoystickConnectionWarning(true);
   }
 
   private void configureBindings() {
-    m_driverController.rightBumper().onTrue(new DropIntakeCommand(intake));
-    m_driverController.leftBumper().onTrue(new InsideIntakeCommand(intake));
-    m_driverController.a().onTrue(new IndexCommand(indexer));
-    m_driverController.a().onFalse(new DeIndexCommand(indexer));
 
+    swerve.setDefaultCommand(
+        Commands.run(() -> {
+          double xSpeed = -driverController.getLeftY();
+          double ySpeed = -driverController.getLeftX();
+          double rot = -driverController.getRightX();
+
+          swerve.drive(
+              ChassisSpeeds.fromFieldRelativeSpeeds(
+                  xSpeed * 4.5,
+                  ySpeed * 4.5,
+                  rot * 3.5,
+                  swerve.getHeading()));
+        }, swerve));
+
+    driverController.start().onTrue(Commands.runOnce(swerve::zeroGyro));
+
+    driverController.rightBumper().onTrue(new DropIntakeCommand(intake));
+    driverController.leftBumper().onTrue(new InsideIntakeCommand(intake));
+      
+    driverController.a().onTrue(new IndexCommand(indexer));
+    driverController.a().onFalse(new DeIndexCommand(indexer));
   }
 
   public Command getAutonomousCommand() {
-    return null;
+    return swerve.getAutonomousCommand("B.classific.auto.lado(human)");
   }
 }
+
