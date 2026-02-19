@@ -33,7 +33,7 @@ public class RobotContainer {
   private final Indexer indexer = new Indexer();
   private final SwerveSubsystem swerve = new SwerveSubsystem();
   private final Shooter shooter = new Shooter(swerve::getPose, opController::getRightY);
-  private final Climber climber = new Climber();
+  private final Climber climber = new Climber(opController::getLeftY);
 
 
 
@@ -42,7 +42,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("InsideIntakeCommand", new InsideIntakeCommand(intake));
     NamedCommands.registerCommand("IndexCommand", new IndexCommand(indexer));
     NamedCommands.registerCommand("DeIndexCommand", new DeIndexCommand(indexer));
-    NamedCommands.registerCommand("TimedIndexCommand", new TimedIndexCommand(indexer, 3));
+    NamedCommands.registerCommand("TimedIndexCommand", new TimedIndexCommand(indexer, 2));
     //MUDAR DEPOIS
     NamedCommands.registerCommand("ClimbCommand", Commands.runOnce(()->{climber.setClimberState(CLIMBER_STATES.DOWN);}, climber));
     configureBindings();
@@ -62,6 +62,10 @@ public class RobotContainer {
 
     driverController.start().onTrue(Commands.runOnce(swerve::zeroGyro));
 
+    driverController.povUp().onTrue(Commands.runOnce(()->{climber.setClimberState(CLIMBER_STATES.UP);}, climber));
+    driverController.povDown().onTrue(Commands.runOnce(()->{climber.setClimberState(CLIMBER_STATES.DOWN);}, climber));
+    driverController.povRight().onTrue(Commands.runOnce(()->{climber.setClimberState(CLIMBER_STATES.DOWNDOWN);}, climber));
+
     driverController.leftTrigger(0.3).toggleOnTrue(new DropIntakeCommand(intake));
     driverController.leftTrigger(0.3).toggleOnFalse(new InsideIntakeCommand(intake));
 
@@ -73,6 +77,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return swerve.getAutonomousCommand("B.classific.auto.lado(human)");
+    return swerve.getAutonomousCommand("Human player side (HP)");
   }
 }

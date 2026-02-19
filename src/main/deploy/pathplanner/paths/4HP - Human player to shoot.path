@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.3877380952351569,
-        "y": 0.7741190476133943
+        "x": 0.4253509933774836,
+        "y": 0.7133377483443712
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.183709451551875,
-        "y": 1.3569476206661713
+        "x": 1.2213223496942014,
+        "y": 1.2961663213971482
       },
       "isLocked": false,
       "linkedName": "HP - Human player"
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -91.43209618416466
+    "rotation": -177.61405596961112
   },
   "useDefaultConstraints": true
 }
