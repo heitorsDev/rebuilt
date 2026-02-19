@@ -5,6 +5,8 @@ import frc.robot.commands.indexerCommands.IndexCommand;
 import frc.robot.commands.indexerCommands.DeIndexCommand;
 import frc.robot.commands.intakeCommands.DropIntakeCommand;
 import frc.robot.commands.intakeCommands.InsideIntakeCommand;
+import frc.robot.commands.swerveCommands.AimToGoalMode;
+import frc.robot.commands.swerveCommands.UnlockDrivingMode;
 import frc.robot.subsystems.Indexer.Indexer;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Shooter.Shooter;
@@ -44,11 +46,14 @@ public class RobotContainer {
 
     driverController.start().onTrue(Commands.runOnce(swerve::zeroGyro));
 
-    driverController.rightBumper().onTrue(new DropIntakeCommand(intake));
-    driverController.leftBumper().onTrue(new InsideIntakeCommand(intake));
+    driverController.leftTrigger(0.3).toggleOnTrue(new DropIntakeCommand(intake));
+    driverController.leftTrigger(0.3).toggleOnFalse(new InsideIntakeCommand(intake));
 
-    driverController.a().onTrue(new IndexCommand(indexer));
-    driverController.a().onFalse(new DeIndexCommand(indexer));
+    driverController.leftBumper().onTrue(new AimToGoalMode(swerve));
+    driverController.leftBumper().onFalse(new UnlockDrivingMode(swerve));
+    
+    driverController.rightBumper().onTrue(new IndexCommand(indexer));
+    driverController.rightBumper().onFalse(new DeIndexCommand(indexer));
   }
 
   public Command getAutonomousCommand() {
