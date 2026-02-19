@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 
 import frc.robot.Constants;
-
+import frc.robot.subsystems.Shooter.ShooterConstants;
 import swervelib.*;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
@@ -37,60 +37,65 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private final SwerveDrive swerveDrive;
 
-  public enum DRIVING_STATES{
+  public enum DRIVING_STATES {
     TELE,
     AUTO,
     AUTO_HEADING
   }
 
-  
-
   private DRIVING_STATES drivingState = DRIVING_STATES.TELE;
   private Pose2d poseToAim = new Pose2d(0, 0, new Rotation2d(0));
-  
-  PIDController angularPID = new PIDController(0.1, 0, 0);
-  
 
-  public void aimToPose(Pose2d poseToAim){
+  PIDController angularPID = new PIDController(0.1, 0, 0);
+
+  public void unlockAim(){
+    this.drivingState = DRIVING_STATES.TELE;
+  }
+
+  public void aimToGoal() {
+    switch (DriverStation.getAlliance().get()) {
+      case Red:
+        this.aimToPose(ShooterConstants.redHubPose);
+        break;
+      case Blue:
+        this.aimToPose(ShooterConstants.blueHubPose);
+        break;
+    }
+  }
+
+  private void aimToPose(Pose2d poseToAim) {
     this.poseToAim = poseToAim;
     this.drivingState = DRIVING_STATES.AUTO_HEADING;
   }
 
-  public void driveTeleop(double xSpeed, double ySpeed, double rot){
-    switch (drivingState){
+  public void driveTeleop(double xSpeed, double ySpeed, double rot) {
+    switch (drivingState) {
       case TELE:
         this.drive(
-              ChassisSpeeds.fromFieldRelativeSpeeds(
-                  xSpeed ,
-                  ySpeed,
-                  rot,
-                  this.getHeading())
-          );
+            ChassisSpeeds.fromFieldRelativeSpeeds(
+                xSpeed,
+                ySpeed,
+                rot,
+                this.getHeading()));
         break;
       case AUTO:
-        //faz algo pra se mexer 100% sozinho
+        // faz algo pra se mexer 100% sozinho
         break;
       case AUTO_HEADING:
-        double angleToAim = 
-          Math.atan2(this.poseToAim.getY()-this.getPose().getY(), this.poseToAim.getX()-this.getPose().getX());
-        
+        double angleToAim = Math.atan2(this.poseToAim.getY() - this.getPose().getY(),
+            this.poseToAim.getX() - this.getPose().getX());
 
         this.drive(
-          ChassisSpeeds.fromFieldRelativeSpeeds(
-            xSpeed,
-            ySpeed,
-            angularPID.calculate(this.getHeading().getRadians(), angleToAim),
-            this.getHeading()
-            ));
+            ChassisSpeeds.fromFieldRelativeSpeeds(
+                xSpeed,
+                ySpeed,
+                angularPID.calculate(this.getHeading().getRadians(), angleToAim),
+                this.getHeading()));
 
-
-        //muda so o heading sozinho
+        // muda so o heading sozinho
         break;
-      }
     }
-
-
-
+  }
 
   public SwerveSubsystem() {
     this(new File(Filesystem.getDeployDirectory(), "swerve"));
@@ -141,13 +146,11 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   /* ======================== PATHPLANNER ======================== */
-public void setupPathPlanner()
-  {
+  public void setupPathPlanner() {
     // Load the RobotConfig from the GUI settings. You should probably
     // store this in your Constants file
     RobotConfig config;
-    try
-    {
+    try {
       config = RobotConfig.fromGUISettings();
 
       final boolean enableFeedforward = true;
@@ -160,51 +163,49 @@ public void setupPathPlanner()
           this::getRobotVelocity,
           // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
           (speedsRobotRelative, moduleFeedForwards) -> {
-            if (enableFeedforward)
-            {
+            if (enableFeedforward) {
               swerveDrive.drive(
                   speedsRobotRelative,
                   swerveDrive.kinematics.toSwerveModuleStates(speedsRobotRelative),
-                  moduleFeedForwards.linearForces()
-                               );
-            } else
-            {
+                  moduleFeedForwards.linearForces());
+            } else {
               swerveDrive.setChassisSpeeds(speedsRobotRelative);
             }
           },
-          // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+          // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also
+          // optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
-              // PPHolonomicController is the built in path following controller for holonomic drive trains
+              // PPHolonomicController is the built in path following controller for holonomic
+              // drive trains
               new PIDConstants(5.0, 0.0, 0.0),
               // Translation PID constants
               new PIDConstants(5.0, 0.0, 0.0)
-              // Rotation PID constants
+          // Rotation PID constants
           ),
           config,
           // The robot configuration
           () -> {
-            // Boolean supplier that controls when the path will be mirrored for the red alliance
+            // Boolean supplier that controls when the path will be mirrored for the red
+            // alliance
             // This will flip the path being followed to the red side of the field.
             // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
             var alliance = DriverStation.getAlliance();
-            if (alliance.isPresent())
-            {
+            if (alliance.isPresent()) {
               return alliance.get() == DriverStation.Alliance.Red;
             }
             return false;
           },
           this
-          // Reference to this subsystem to set requirements
-                           );
+      // Reference to this subsystem to set requirements
+      );
 
-    } catch (Exception e)
-    {
+    } catch (Exception e) {
       // Handle exception as needed
       e.printStackTrace();
     }
 
-    //Preload PathPlanner Path finding
+    // Preload PathPlanner Path finding
     // IF USING CUSTOM PATHFINDER ADD BEFORE THIS LINE
     PathfindingCommand.warmupCommand().schedule();
   }
@@ -288,15 +289,13 @@ public void setupPathPlanner()
     return DriverStation.getAlliance().isPresent()
         && DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
   }
- public void zeroGyroWithAlliance()
-  {
-    if (isRedAlliance())
-    {
+
+  public void zeroGyroWithAlliance() {
+    if (isRedAlliance()) {
       zeroGyro();
-      //Set the pose 180 degrees
+      // Set the pose 180 degrees
       resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
-    } else
-    {
+    } else {
       zeroGyro();
     }
   }
