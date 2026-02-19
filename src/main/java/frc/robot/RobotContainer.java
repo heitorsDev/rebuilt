@@ -2,11 +2,14 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.indexerCommands.IndexCommand;
+import frc.robot.commands.indexerCommands.TimedIndexCommand;
 import frc.robot.commands.indexerCommands.DeIndexCommand;
 import frc.robot.commands.intakeCommands.DropIntakeCommand;
 import frc.robot.commands.intakeCommands.InsideIntakeCommand;
 import frc.robot.commands.swerveCommands.AimToGoalMode;
 import frc.robot.commands.swerveCommands.UnlockDrivingMode;
+import frc.robot.subsystems.Climber.Climber;
+import frc.robot.subsystems.Climber.Climber.CLIMBER_STATES;
 import frc.robot.subsystems.Indexer.Indexer;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Shooter.Shooter;
@@ -18,6 +21,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
@@ -29,7 +33,7 @@ public class RobotContainer {
   private final Indexer indexer = new Indexer();
   private final SwerveSubsystem swerve = new SwerveSubsystem();
   private final Shooter shooter = new Shooter(swerve::getPose, opController::getRightY);
-
+  private final Climber climber = new Climber();
 
 
 
@@ -38,7 +42,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("InsideIntakeCommand", new InsideIntakeCommand(intake));
     NamedCommands.registerCommand("IndexCommand", new IndexCommand(indexer));
     NamedCommands.registerCommand("DeIndexCommand", new DeIndexCommand(indexer));
-    
+    NamedCommands.registerCommand("TimedIndexCommand", new TimedIndexCommand(indexer, 3));
+    //MUDAR DEPOIS
+    NamedCommands.registerCommand("ClimbCommand", Commands.runOnce(()->{climber.setClimberState(CLIMBER_STATES.DOWN);}, climber));
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
   }

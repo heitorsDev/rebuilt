@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4351071428571442,
-        "y": 2.760880952380953
+        "x": 4.31807142857143,
+        "y": 0.8928928571428583
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.185187689411388,
-        "y": 2.767226564201293
+        "x": 4.370453700754147,
+        "y": 0.6484422536235055
       },
       "isLocked": false,
-      "linkedName": "B.lado.classific"
+      "linkedName": "B.start.classific"
     },
     {
       "anchor": {
-        "x": 1.3379285714285722,
-        "y": 2.761
+        "x": 7.708523809523809,
+        "y": 2.253392857142858
       },
       "prevControl": {
-        "x": 1.6142463756282934,
-        "y": 2.7493355327603775
+        "x": 7.8165,
+        "y": 0.9468809523809534
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "HP - Mid intake"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 1.0085937537693346
+    "rotation": 86.82016988013571
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 88.61360656489828
+    "rotation": -0.22031080672923514
   },
   "useDefaultConstraints": true
 }

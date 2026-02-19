@@ -3,35 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.47411904761904866,
-        "y": 0.6769404761904776
+        "x": 7.708523809523809,
+        "y": 2.253392857142858
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5056960821495204,
-        "y": 2.0734247852574885
+        "x": 6.480026490065999,
+        "y": -0.13960264899964958
       },
       "isLocked": false,
-      "linkedName": "B.human.classific"
+      "linkedName": "HP - Mid intake"
     },
     {
       "anchor": {
-        "x": 2.8280000000000007,
-        "y": 3.2791666666666672
+        "x": 2.741619047625599,
+        "y": 2.436952380958179
       },
       "prevControl": {
-        "x": 2.5796547619047625,
-        "y": 3.1280000000000006
+        "x": 2.023112582781231,
+        "y": 0.65327152318578
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "B.hub.classific"
+      "linkedName": "HP - Shooting pos"
     }
   ],
   "rotationTargets": [
     {
       "waypointRelativePos": 0.5,
-      "rotationDegrees": 0.0
+      "rotationDegrees": -1.3019526722204326
     }
   ],
   "constraintZones": [],
@@ -42,8 +42,8 @@
         "y": 4.025
       },
       "rotationOffset": 180.0,
-      "minWaypointRelativePos": 0.21935483870967193,
-      "maxWaypointRelativePos": 0.8188585607940415,
+      "minWaypointRelativePos": 0.8228287841191045,
+      "maxWaypointRelativePos": 1.0,
       "name": "Point Towards Zone"
     }
   ],
@@ -64,7 +64,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -91.09655807023623
+    "rotation": 86.82016988013571
   },
   "useDefaultConstraints": true
 }

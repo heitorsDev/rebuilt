@@ -3,45 +3,34 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.838095238095239,
-        "y": 5.827404761904762
+        "x": 2.741619047625599,
+        "y": 2.436952380958179
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.898702380956487,
-        "y": 8.30005952381475
+        "x": 2.4719441019505526,
+        "y": 2.267618553947075
       },
       "isLocked": false,
-      "linkedName": "B.centro.meio"
+      "linkedName": "HP - Shooting pos"
     },
     {
       "anchor": {
-        "x": 2.093761904761905,
-        "y": 4.661261904761904
+        "x": 0.3877380952351569,
+        "y": 0.7741190476133943
       },
       "prevControl": {
-        "x": 1.9857975573570745,
-        "y": 8.299660412304672
+        "x": 0.10205286828049792,
+        "y": 0.563942957186291
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "B.centro.Shoot"
+      "linkedName": "HP - Human player"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "pointTowardsZones": [
-    {
-      "fieldPosition": {
-        "x": 4.625,
-        "y": 4.025
-      },
-      "rotationOffset": 0.0,
-      "minWaypointRelativePos": 0.5885856079404439,
-      "maxWaypointRelativePos": 1.0,
-      "name": "Point Towards Zone"
-    }
-  ],
+  "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 2.5,
@@ -53,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -91.43209618416466
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": -147.85098264930414
   },
   "useDefaultConstraints": true
 }

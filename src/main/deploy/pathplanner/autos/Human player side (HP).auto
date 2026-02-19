@@ -1,0 +1,67 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1HP - Start to mid intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DropIntakeCommand"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2HP - Mid to shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "TimedIndexCommand"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3HP - Shoot to human player"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4HP - Human player to shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "5HP - Shoot to climb"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ClimbCommand"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
