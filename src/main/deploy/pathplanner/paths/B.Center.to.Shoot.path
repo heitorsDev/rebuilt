@@ -1,0 +1,65 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.838095238095239,
+        "y": 5.827404761904762
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.898702380956487,
+        "y": 8.30005952381475
+      },
+      "isLocked": false,
+      "linkedName": "B.centro.meio"
+    },
+    {
+      "anchor": {
+        "x": 2.093761904761905,
+        "y": 4.661261904761904
+      },
+      "prevControl": {
+        "x": 1.9857975573570745,
+        "y": 8.299660412304672
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "B.centro.Shoot"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [
+    {
+      "fieldPosition": {
+        "x": 4.625,
+        "y": 4.025
+      },
+      "rotationOffset": 0.0,
+      "minWaypointRelativePos": 0.5885856079404439,
+      "maxWaypointRelativePos": 1.0,
+      "name": "Point Towards Zone"
+    }
+  ],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.5,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -90.0
+  },
+  "useDefaultConstraints": true
+}
