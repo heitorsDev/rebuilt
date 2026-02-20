@@ -88,7 +88,7 @@ public class Shooter extends SubsystemBase {
 
         distance = Math.hypot(dx, dy);
     }
-    public double tuningRPM = 0;
+    public double tuningRPM = 5000;
     private void updatePower() {
         switch (currentShooterState) {
             case TUNING -> {

@@ -3,45 +3,34 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 4.31807142857143,
+        "y": 0.8928928571428583
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.141130952380953,
-        "y": 7.393059523809524
+        "x": 4.370453700754147,
+        "y": 0.6484422536235055
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "B.start.classific"
     },
     {
       "anchor": {
-        "x": 3.141130952380953,
-        "y": 6.594035714285715
+        "x": 6.095602649006622,
+        "y": 1.8065430463576173
       },
       "prevControl": {
-        "x": 2.141130952380953,
-        "y": 6.594035714285715
+        "x": 6.203578839482812,
+        "y": 0.5000311415957128
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "HP - Mid intake"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "pointTowardsZones": [
-    {
-      "fieldPosition": {
-        "x": 4.625,
-        "y": 4.025
-      },
-      "rotationOffset": 0.0,
-      "minWaypointRelativePos": 0.0,
-      "maxWaypointRelativePos": 1.0,
-      "name": "Point Towards Zone"
-    }
-  ],
+  "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 2.5,
@@ -53,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.9877603996397748
+    "rotation": 86.82016988013571
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -0.22031080672923514
   },
   "useDefaultConstraints": true
 }

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4351071428571442,
-        "y": 2.760880952380953
+        "x": 2.741619047625599,
+        "y": 2.436952380958179
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.185187689411388,
-        "y": 2.767226564201293
+        "x": 2.4719441019505526,
+        "y": 2.267618553947075
       },
       "isLocked": false,
-      "linkedName": "B.lado.classific"
+      "linkedName": "HP - Shooting pos"
     },
     {
       "anchor": {
-        "x": 1.3379285714285722,
-        "y": 2.761
+        "x": 0.4253509933774836,
+        "y": 0.7133377483443712
       },
       "prevControl": {
-        "x": 1.6142463756282934,
-        "y": 2.7493355327603775
+        "x": 0.13966576642282463,
+        "y": 0.5031616579172679
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "HP - Human player"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 1.0085937537693346
+    "rotation": -177.61405596961112
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 88.61360656489828
+    "rotation": -147.85098264930414
   },
   "useDefaultConstraints": true
 }
