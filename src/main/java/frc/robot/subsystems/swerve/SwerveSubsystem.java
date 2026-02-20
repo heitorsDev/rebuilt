@@ -1,5 +1,6 @@
 package frc.robot.subsystems.swerve;
 
+import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meter;
 
 import java.io.File;
@@ -14,6 +15,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.*;
@@ -48,7 +50,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   PIDController angularPID = new PIDController(3, 0, 0);
 
-  public void unlockAim(){
+  public void unlockAim() {
     this.drivingState = DRIVING_STATES.TELE;
   }
 
@@ -140,9 +142,49 @@ public class SwerveSubsystem extends SubsystemBase {
             pose.getY(),
             pose.getRotation().getRadians()
         });
-
+    UpdateVision();
     SmartDashboard.putNumber("HeadingDeg",
         pose.getRotation().getDegrees());
+  }
+
+  private void UpdateVision() {
+    LimelightHelpers.SetRobotOrientation(
+        "limelight",
+        swerveDrive.getPose().getRotation().getDegrees(), // use o gyro diretamente
+        0, 0, 0, 0, 0);
+
+    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+
+    // Rejeita se estimativa inválida
+    if (mt2 == null || mt2.pose == null)
+      return;
+
+    // Rejeita se não vê nenhuma tag
+    if (mt2.tagCount == 0)
+      return;
+
+    // Rejeita se girando muito rápido (MegaTag2 usa gyro, mas ainda assim)
+    if (Math.abs(swerveDrive.getGyro().getYawAngularVelocity()
+        .in(DegreesPerSecond)) > 720)
+      return;
+
+    // Rejeita pose muito longe da atual (provavelmente leitura errada)
+    double poseDiff = mt2.pose.getTranslation()
+        .getDistance(getPose().getTranslation());
+    if (poseDiff > 1.5)
+      return; // metros — ajuste conforme necessário
+
+    // Std devs dinâmicos baseados na distância média das tags
+    double avgDist = mt2.avgTagDist; // distância média em metros
+    double xyStdDev = 0.3 + (avgDist * avgDist * 0.05); // cresce quadraticamente
+    // mt2.tagCount > 1 = muito mais confiável
+    if (mt2.tagCount > 1)
+      xyStdDev *= 0.5;
+
+    swerveDrive.setVisionMeasurementStdDevs(
+        VecBuilder.fill(xyStdDev, xyStdDev, 9999999));
+
+    swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
   }
 
   /* ======================== PATHPLANNER ======================== */
