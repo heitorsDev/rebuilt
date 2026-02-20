@@ -3,32 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.31807142857143,
-        "y": 0.8928928571428583
+        "x": 7.83008559201866,
+        "y": 4.675463623402886
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.370453700754147,
-        "y": 0.6484422536235055
+        "x": 7.610128388017117,
+        "y": 7.8583737517831675
       },
       "isLocked": false,
-      "linkedName": "B.start.classific"
+      "linkedName": "DP - Mid intake 2"
     },
     {
       "anchor": {
-        "x": 7.7265763195435095,
-        "y": 2.1394864479315263
+        "x": 2.745192582025677,
+        "y": 6.059900142653353
       },
       "prevControl": {
-        "x": 6.989072753209701,
-        "y": 0.4962767475035661
+        "x": 3.6897146932952922,
+        "y": 8.544122681883024
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "HP - Mid intake"
+      "linkedName": "DP - Shoot"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.7604682575416467,
+      "rotationDegrees": 177.54505222182465
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -42,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 61.389540334035054
+    "rotation": 124.28687697720893
   },
   "reversed": false,
-  "folder": "Human player",
+  "folder": "Depot",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -0.22031080672923514
+    "rotation": -79.15969454487606
   },
   "useDefaultConstraints": true
 }
