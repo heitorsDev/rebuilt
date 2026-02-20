@@ -5,15 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "DropIntakeCommand"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "1HP - Start to mid intake"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DropIntakeCommand"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "1HP - Start to mid intake"
+                }
+              }
+            ]
           }
         },
         {
@@ -37,7 +44,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 3.0
           }
         },
         {
