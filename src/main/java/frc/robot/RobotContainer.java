@@ -42,7 +42,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("InsideIntakeCommand", new InsideIntakeCommand(intake));
     NamedCommands.registerCommand("IndexCommand", new IndexCommand(indexer));
     NamedCommands.registerCommand("DeIndexCommand", new DeIndexCommand(indexer));
-    NamedCommands.registerCommand("TimedIndexCommand", new TimedIndexCommand(indexer, 2));
+    NamedCommands.registerCommand("TimedIndexCommand", new TimedIndexCommand(indexer, 3));
     //MUDAR DEPOIS
     NamedCommands.registerCommand("ClimbCommand", Commands.runOnce(()->{climber.setClimberState(CLIMBER_STATES.DOWN);}, climber));
     configureBindings();
