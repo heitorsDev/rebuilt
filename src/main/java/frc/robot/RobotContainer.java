@@ -15,10 +15,13 @@ import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -32,12 +35,16 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Indexer indexer = new Indexer();
   private final SwerveSubsystem swerve = new SwerveSubsystem();
-  private final Shooter shooter = new Shooter(swerve::getPose, opController::getRightY);
+  private final Shooter shooter = new Shooter(swerve::getPose);
   private final Climber climber = new Climber(opController::getLeftY);
 
-
+  private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData(autoChooser);
+
+
     NamedCommands.registerCommand("DropIntakeCommand", new DropIntakeCommand(intake));
     NamedCommands.registerCommand("InsideIntakeCommand", new InsideIntakeCommand(intake));
     NamedCommands.registerCommand("IndexCommand", new IndexCommand(indexer));
@@ -66,8 +73,8 @@ public class RobotContainer {
     driverController.povDown().onTrue(Commands.runOnce(()->{climber.setClimberState(CLIMBER_STATES.DOWN);}, climber));
     driverController.povRight().onTrue(Commands.runOnce(()->{climber.setClimberState(CLIMBER_STATES.DOWNDOWN);}, climber));
 
-    driverController.leftTrigger(0.3).toggleOnTrue(new DropIntakeCommand(intake));
-    driverController.leftTrigger(0.3).toggleOnFalse(new InsideIntakeCommand(intake));
+    driverController.rightTrigger(0.3).onTrue(new DropIntakeCommand(intake));
+    driverController.leftTrigger(0.3).onFalse(new InsideIntakeCommand(intake));
 
     driverController.leftBumper().onTrue(new AimToGoalMode(swerve));
     driverController.leftBumper().onFalse(new UnlockDrivingMode(swerve));
@@ -77,6 +84,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return swerve.getAutonomousCommand("Human player side (HP)");
+    return autoChooser.getSelected();
   }
 }

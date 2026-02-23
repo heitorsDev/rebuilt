@@ -15,7 +15,7 @@ public final class ShooterConstants {
     public static final double shooterkV = 0.00018;
 
     public static final Pose2d redHubPose  = new Pose2d(14.5, 4, Rotation2d.fromDegrees(180));
-    public static final Pose2d blueHubPose = new Pose2d(4, 4, Rotation2d.fromDegrees(180));
+    public static final Pose2d blueHubPose = new Pose2d(4.6, 4, Rotation2d.fromDegrees(180));
 
     public static final double[][] RPMtable = {
         {1.0, 2500},
