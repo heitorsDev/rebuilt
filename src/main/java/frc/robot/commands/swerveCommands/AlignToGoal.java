@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Field.FieldConstants;
 import frc.robot.subsystems.Shooter.ShooterConstants;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
@@ -18,25 +19,26 @@ public class AlignToGoal extends Command {
 
     private final SwerveSubsystem swerve;
     private Pose2d targetPose;
-    
-        private final PIDController angularPID;
-        private final Timer stableTimer;
-    
-        public AlignToGoal(SwerveSubsystem swerve) {
-            this.swerve = swerve;
-            
-            this.stableTimer = new Timer();
-    
-            this.angularPID = new PIDController(4.0, 0.0, 0.15);
-            this.angularPID.enableContinuousInput(-Math.PI, Math.PI);
-            this.angularPID.setTolerance(angleTreshold);
-    
-            addRequirements(swerve);
-        }
-    
-        @Override
-        public void initialize() {
-            this.targetPose = (DriverStation.getAlliance().get()==Alliance.Red?ShooterConstants.redHubPose:ShooterConstants.blueHubPose);
+
+    private final PIDController angularPID;
+    private final Timer stableTimer;
+
+    public AlignToGoal(SwerveSubsystem swerve) {
+        this.swerve = swerve;
+
+        this.stableTimer = new Timer();
+
+        this.angularPID = new PIDController(4.0, 0.0, 0.15);
+        this.angularPID.enableContinuousInput(-Math.PI, Math.PI);
+        this.angularPID.setTolerance(angleTreshold);
+
+        addRequirements(swerve);
+    }
+
+    @Override
+    public void initialize() {
+        this.targetPose = (DriverStation.getAlliance().get() == Alliance.Red ? FieldConstants.redHubPose
+                : FieldConstants.blueHubPose);
         angularPID.reset();
         stableTimer.reset();
         stableTimer.stop();

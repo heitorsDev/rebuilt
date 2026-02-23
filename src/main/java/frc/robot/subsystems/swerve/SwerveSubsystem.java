@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 
 import java.io.File;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -29,6 +30,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Shooter.ShooterConstants;
 import frc.robot.subsystems.swerve.LimelightHelpers.PoseEstimate;
 import swervelib.*;
@@ -60,14 +62,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public void aimToGoal() {
-    switch (DriverStation.getAlliance().get()) {
-      case Red:
-        this.aimToPose(ShooterConstants.redHubPose);
-        break;
-      case Blue:
-        this.aimToPose(ShooterConstants.blueHubPose);
-        break;
-    }
+    this.aimToPose(hubPoseSupplier.get());
   }
 
   private void aimToPose(Pose2d poseToAim) {
@@ -99,9 +94,10 @@ public class SwerveSubsystem extends SubsystemBase {
         break;
     }
   }
-
-  public SwerveSubsystem() {
+  private Supplier<Pose2d> hubPoseSupplier;
+  public SwerveSubsystem(Supplier<Pose2d> hubPoseSupplier) {
     this(new File(Filesystem.getDeployDirectory(), "swerve"));
+    this.hubPoseSupplier = hubPoseSupplier;
   }
 
   public SwerveSubsystem(File directory) {

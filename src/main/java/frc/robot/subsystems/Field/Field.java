@@ -1,30 +1,19 @@
 package frc.robot.subsystems.Field;
 
 import java.util.Optional;
-import java.util.function.Supplier;
-
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.ClosedLoopConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.networktables.BooleanEntry;
-import edu.wpi.first.networktables.DoubleEntry;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.BooleanTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.Shooter.ShooterConstants;
 
 public class Field extends SubsystemBase {
+  private final NetworkTable fieldTable = NetworkTableInstance.getDefault().getTable("Field");
 
-    private final NetworkTable fieldTable = NetworkTableInstance.getDefault().getTable("Field");
-
-    private final BooleanEntry ntActiveHub = fieldTable.getBooleanTopic("activeHub", getEntry(false));
+    private final BooleanPublisher ntActiveHub = fieldTable.getBooleanTopic("activeHub").publish();
 
     public Field() {
 
@@ -78,5 +67,10 @@ public class Field extends SubsystemBase {
      @Override 
      public void periodic() {
         ntActiveHub.set(isHubActive());
+        
+    }
+    public Pose2d getHubPose(){
+        return DriverStation.getAlliance().get()==Alliance.Red?FieldConstants.redHubPose:FieldConstants.blueHubPose;
     }
 }
+

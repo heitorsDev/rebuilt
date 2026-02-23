@@ -51,9 +51,10 @@ public class Shooter extends SubsystemBase {
             shooterTable.getDoubleTopic("Distance").getEntry(0);
     private final DoubleEntry ntRPMError =
             shooterTable.getDoubleTopic("RPMError").getEntry(0);
-
-    public Shooter(Supplier<Pose2d> poseSupplier) {
+        Supplier<Pose2d> hubPoseSupplier;
+    public Shooter(Supplier<Pose2d> poseSupplier, Supplier<Pose2d> hubPoseSupplier) {
         this.poseSupplier = poseSupplier;
+        this.hubPoseSupplier = poseSupplier;
 
         SparkMaxConfig config = new SparkMaxConfig();
         config.smartCurrentLimit(60);
@@ -90,14 +91,12 @@ public class Shooter extends SubsystemBase {
     public void setState(SHOOTER_STATES state) {
         this.currentShooterState = state;
     }
-
+    
     private void updateDistance() {
         var alliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue);
 
         Pose2d botPose = poseSupplier.get();
-        Pose2d hubPose = alliance == DriverStation.Alliance.Red
-                ? ShooterConstants.redHubPose
-                : ShooterConstants.blueHubPose;
+        Pose2d hubPose = hubPoseSupplier.get();
 
         double dx = hubPose.getX() - botPose.getX();
         double dy = hubPose.getY() - botPose.getY();
