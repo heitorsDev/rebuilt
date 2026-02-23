@@ -20,6 +20,8 @@ import java.util.Optional;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -45,6 +47,12 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
+    CameraServer.startAutomaticCapture();
+    HttpCamera frontWebCam = new HttpCamera("front-webcam", "http://10.101.90.11:1181/stream.mjpeg");
+    CameraServer.addCamera(frontWebCam);
+
+    CameraServer.addServer("limelight-stream")
+        .setSource(new HttpCamera("limelight", "http://limelight.local:5800/stream.mjpeg"));
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData(autoChooser);
 
@@ -96,6 +104,6 @@ public class RobotContainer {
 
 
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    return AutoBuilder.buildAuto("Human player side (HP)");
   }
 }

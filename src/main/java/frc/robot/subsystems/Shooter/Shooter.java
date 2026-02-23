@@ -9,6 +9,8 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.ResetMode;
 import com.revrobotics.PersistMode;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.NetworkTable;
@@ -39,7 +41,7 @@ public class Shooter extends SubsystemBase {
             NetworkTableInstance.getDefault().getTable("Shooter");
 
     private final DoubleEntry ntTuningRPM =
-            shooterTable.getDoubleTopic("TuningRPM").getEntry(5000);
+            shooterTable.getDoubleTopic("TuningRPM").getEntry(6000);
 
     private final DoubleEntry ntRealRPMRight =
             shooterTable.getDoubleTopic("RealRPMRight").getEntry(0);
@@ -129,5 +131,6 @@ public class Shooter extends SubsystemBase {
         updateDistance();
         updatePower();
         updateTelemetry();
+        
     }
 }

@@ -14,7 +14,7 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class AlignToGoal extends Command {
 
-    private static final double angleTreshold = Math.toRadians(2.0);
+    private static final double angleTreshold = Math.toRadians(10);
     private static final double stableTime = 0.2;
 
     private final SwerveSubsystem swerve;
@@ -50,7 +50,7 @@ public class AlignToGoal extends Command {
 
         double angleToTarget = Math.atan2(
                 targetPose.getY() - currentPose.getY(),
-                targetPose.getX() - currentPose.getX());
+                targetPose.getX() - currentPose.getX())+Math.PI;
 
         double currentHeading = currentPose.getRotation().getRadians();
         double error = MathUtil.angleModulus(angleToTarget - currentHeading);
