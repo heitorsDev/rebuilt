@@ -64,6 +64,14 @@ public class SwerveSubsystem extends SubsystemBase {
   public void aimToGoal() {
     this.aimToPose(hubPoseSupplier.get());
   }
+  public void aimForFeeding(){
+    boolean atHPQuadrant = 
+      this.getPose().getY()<=4;
+    
+
+
+    this.aimToPose(poseToAim);
+  }
 
   private void aimToPose(Pose2d poseToAim) {
     this.poseToAim = poseToAim;
