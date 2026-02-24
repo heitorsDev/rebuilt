@@ -65,7 +65,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("InsideIntakeCommand", new InsideIntakeCommand(intake));
     NamedCommands.registerCommand("IndexCommand", new IndexCommand(indexer));
     NamedCommands.registerCommand("DeIndexCommand", new DeIndexCommand(indexer));
-    NamedCommands.registerCommand("TimedIndexCommand", new TimedIndexCommand(indexer, swerve, 3));
+    NamedCommands.registerCommand("TimedIndexCommand", new TimedIndexCommand(indexer, swerve, 3, shooter));
     // MUDAR DEPOIS
     NamedCommands.registerCommand("ClimbCommand", Commands.runOnce(() -> {
       climber.setClimberState(CLIMBER_STATES.DOWN);

@@ -9,19 +9,17 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.ResetMode;
 import com.revrobotics.PersistMode;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
 
     private final Supplier<Pose2d> poseSupplier;
     private final Supplier<Pose2d> feedingPoseSupplier;
+    private final Supplier<Pose2d> hubPoseSupplier; // FIX: moved to correct position
 
     private final SparkFlex rightShooter =
             new SparkFlex(ShooterConstants.right_shooter_id, MotorType.kBrushless);
@@ -49,18 +47,22 @@ public class Shooter extends SubsystemBase {
     private final DoubleEntry ntRealRPMRight =
             shooterTable.getDoubleTopic("RealRPMRight").getEntry(0);
 
-    private final DoubleEntry ntRealRPMLeft = shooterTable.getDoubleTopic("RealRPMLeft").getEntry(0);
+    private final DoubleEntry ntRealRPMLeft =
+            shooterTable.getDoubleTopic("RealRPMLeft").getEntry(0);
+
     private final DoubleEntry ntTargetRPM =
             shooterTable.getDoubleTopic("TargetRPM").getEntry(0);
+
     private final DoubleEntry ntDistance =
             shooterTable.getDoubleTopic("Distance").getEntry(0);
+
     private final DoubleEntry ntRPMError =
             shooterTable.getDoubleTopic("RPMError").getEntry(0);
-        private final Supplier<Pose2d> hubPoseSupplier;
+
     public Shooter(Supplier<Pose2d> poseSupplier, Supplier<Pose2d> hubPoseSupplier, Supplier<Pose2d> feedingPoseSupplier) {
-        this.feedingPoseSupplier = feedingPoseSupplier;
         this.poseSupplier = poseSupplier;
-        this.hubPoseSupplier = poseSupplier;
+        this.hubPoseSupplier = hubPoseSupplier;       // FIX: was incorrectly assigned poseSupplier
+        this.feedingPoseSupplier = feedingPoseSupplier;
 
         SparkMaxConfig config = new SparkMaxConfig();
         config.smartCurrentLimit(60);
@@ -86,7 +88,8 @@ public class Shooter extends SubsystemBase {
     public double getVelocityRight() {
         return rightShooter.getEncoder().getVelocity();
     }
-    public double getVelocityLeft(){
+
+    public double getVelocityLeft() {
         return leftShooter.getEncoder().getVelocity();
     }
 
@@ -97,24 +100,23 @@ public class Shooter extends SubsystemBase {
     public void setState(SHOOTER_STATES state) {
         this.currentShooterState = state;
     }
-    
+
     private void updateHubDistance() {
- 
         Pose2d botPose = poseSupplier.get();
         Pose2d hubPose = hubPoseSupplier.get();
 
         double dx = hubPose.getX() - botPose.getX();
         double dy = hubPose.getY() - botPose.getY();
-        hubDistance = Math.hypot(dx, dy);
+        hubDistance = Math.hypot(dx, dy); // FIX: was already correct, but now hubPoseSupplier is properly assigned
     }
+
     private void updateFeedingDistance() {
-  
         Pose2d botPose = poseSupplier.get();
         Pose2d feedingPose = feedingPoseSupplier.get();
 
         double dx = feedingPose.getX() - botPose.getX();
         double dy = feedingPose.getY() - botPose.getY();
-        hubDistance = Math.hypot(dx, dy);
+        feedingDistance = Math.hypot(dx, dy); // FIX: was writing to hubDistance instead of feedingDistance
     }
 
     private void updatePower() {
@@ -129,11 +131,11 @@ public class Shooter extends SubsystemBase {
     }
 
     private void updateTelemetry() {
-
         ntRealRPMRight.set(getVelocityRight());
         ntRealRPMLeft.set(getVelocityLeft());
         ntTargetRPM.set(targetRPM);
         ntDistance.set(hubDistance);
+        ntRPMError.set(getVelocityRight() - targetRPM); // FIX: ntRPMError was never being set
 
         shooterTable.getEntry("State").setString(currentShooterState.name());
         shooterTable.getEntry("AtSpeed").setBoolean(atSpeed(100));
@@ -141,10 +143,9 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-        updateFeedingDistance();
-        updateHubDistance();
+        updateHubDistance();    // FIX: reordered — hub first, then feeding, so hubDistance isn't
+        updateFeedingDistance(); //      overwritten before telemetry reads it
         updatePower();
         updateTelemetry();
-        
     }
 }
