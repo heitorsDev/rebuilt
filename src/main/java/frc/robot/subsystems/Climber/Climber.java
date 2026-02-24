@@ -21,7 +21,7 @@ public class Climber extends SubsystemBase{
     Supplier<Double> doubleSupplier;
     
     private CLIMBER_STATES currentClimberState = CLIMBER_STATES.TEST;
-
+    private double offset = 0;
   
     private SparkMax climber = new SparkMax(ClimberConstants.climber_id, MotorType.kBrushless);
 
@@ -51,7 +51,7 @@ public class Climber extends SubsystemBase{
 
     @Override
     public void periodic() {
-        
+        offset+=doubleSupplier.get();
         switch (currentClimberState) {
             case DOWN:
                 climberSP = ClimberConstants.down_setpoint;
@@ -61,7 +61,6 @@ public class Climber extends SubsystemBase{
                 climberSP = ClimberConstants.up_setpoint;
                 break;
             case TEST:
-                climberSP+=doubleSupplier.get();
                 break;
             case DOWNDOWN:
                 climberSP = ClimberConstants.down_down_setpoint;
@@ -70,7 +69,7 @@ public class Climber extends SubsystemBase{
         }
 
         climber.getClosedLoopController().setSetpoint(
-            climberSP,
+            climberSP+offset,
             SparkMax.ControlType.kPosition
         );
         SmartDashboard.putNumber("Climber position: ", climber.getEncoder().getPosition());
