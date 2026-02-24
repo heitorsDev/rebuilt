@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Shooter extends SubsystemBase {
 
     private final Supplier<Pose2d> poseSupplier;
+    private final Supplier<Pose2d> feedingPoseSupplier;
 
     private final SparkFlex rightShooter =
             new SparkFlex(ShooterConstants.right_shooter_id, MotorType.kBrushless);
@@ -28,10 +29,12 @@ public class Shooter extends SubsystemBase {
             new SparkFlex(ShooterConstants.left_shooter_id, MotorType.kBrushless);
 
     private double targetRPM = 0;
-    private double distance = 0;
+    private double hubDistance = 0;
+    private double feedingDistance = 0;
 
     public enum SHOOTER_STATES {
-        DEFAULT,
+        HUB,
+        FEED,
         TUNING
     }
 
@@ -53,8 +56,9 @@ public class Shooter extends SubsystemBase {
             shooterTable.getDoubleTopic("Distance").getEntry(0);
     private final DoubleEntry ntRPMError =
             shooterTable.getDoubleTopic("RPMError").getEntry(0);
-        Supplier<Pose2d> hubPoseSupplier;
-    public Shooter(Supplier<Pose2d> poseSupplier, Supplier<Pose2d> hubPoseSupplier) {
+        private final Supplier<Pose2d> hubPoseSupplier;
+    public Shooter(Supplier<Pose2d> poseSupplier, Supplier<Pose2d> hubPoseSupplier, Supplier<Pose2d> feedingPoseSupplier) {
+        this.feedingPoseSupplier = feedingPoseSupplier;
         this.poseSupplier = poseSupplier;
         this.hubPoseSupplier = poseSupplier;
 
@@ -94,15 +98,23 @@ public class Shooter extends SubsystemBase {
         this.currentShooterState = state;
     }
     
-    private void updateDistance() {
-        var alliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue);
-
+    private void updateHubDistance() {
+ 
         Pose2d botPose = poseSupplier.get();
         Pose2d hubPose = hubPoseSupplier.get();
 
         double dx = hubPose.getX() - botPose.getX();
         double dy = hubPose.getY() - botPose.getY();
-        distance = Math.hypot(dx, dy);
+        hubDistance = Math.hypot(dx, dy);
+    }
+    private void updateFeedingDistance() {
+  
+        Pose2d botPose = poseSupplier.get();
+        Pose2d feedingPose = feedingPoseSupplier.get();
+
+        double dx = feedingPose.getX() - botPose.getX();
+        double dy = feedingPose.getY() - botPose.getY();
+        hubDistance = Math.hypot(dx, dy);
     }
 
     private void updatePower() {
@@ -111,7 +123,8 @@ public class Shooter extends SubsystemBase {
                 double tuningRPM = ntTuningRPM.get();
                 setVelocity(tuningRPM);
             }
-            case DEFAULT -> setVelocity(ShooterConstants.RPMinterpolation.get(distance));
+            case HUB -> setVelocity(ShooterConstants.RPMinterpolation.get(hubDistance));
+            case FEED -> setVelocity(ShooterConstants.RPMinterpolation.get(feedingDistance));
         }
     }
 
@@ -120,7 +133,7 @@ public class Shooter extends SubsystemBase {
         ntRealRPMRight.set(getVelocityRight());
         ntRealRPMLeft.set(getVelocityLeft());
         ntTargetRPM.set(targetRPM);
-        ntDistance.set(distance);
+        ntDistance.set(hubDistance);
 
         shooterTable.getEntry("State").setString(currentShooterState.name());
         shooterTable.getEntry("AtSpeed").setBoolean(atSpeed(100));
@@ -128,7 +141,8 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-        updateDistance();
+        updateFeedingDistance();
+        updateHubDistance();
         updatePower();
         updateTelemetry();
         

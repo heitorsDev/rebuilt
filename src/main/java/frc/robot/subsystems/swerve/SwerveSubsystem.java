@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.*;
 
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.Field.FieldConstants;
 import frc.robot.subsystems.Shooter.ShooterConstants;
 import frc.robot.subsystems.swerve.LimelightHelpers.PoseEstimate;
 import swervelib.*;
@@ -64,13 +65,26 @@ public class SwerveSubsystem extends SubsystemBase {
   public void aimToGoal() {
     this.aimToPose(hubPoseSupplier.get());
   }
-  public void aimForFeeding(){
-    boolean atHPQuadrant = 
+  public Pose2d getCurrentFeedingPose(){
+      boolean atHPQuadrant = 
       this.getPose().getY()<=4;
+
+      if (DriverStation.getAlliance().get()==Alliance.Red){
+        if (atHPQuadrant){
+          return FieldConstants.feedingPoseRedHP;
+        } 
+        return FieldConstants.feedingPoseRedDP;
+      } else {
+        if (atHPQuadrant){
+          return FieldConstants.feedingPoseBlueHP;
+        } 
+        return FieldConstants.feedingPoseBlueDP;
+      }
+
+  }
+  public void aimForFeeding(){
     
-
-
-    this.aimToPose(poseToAim);
+    this.aimToPose(getCurrentFeedingPose());
   }
 
   private void aimToPose(Pose2d poseToAim) {
