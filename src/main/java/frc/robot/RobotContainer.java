@@ -87,18 +87,18 @@ public class RobotContainer {
 
     driverController.start().onTrue(Commands.runOnce(swerve::zeroGyro));
 
-    driverController.povUp().onTrue(Commands.runOnce(() -> {
+    opController.povUp().onTrue(Commands.runOnce(() -> {
       climber.setClimberState(CLIMBER_STATES.UP);
     }, climber));
-    driverController.povDown().onTrue(Commands.runOnce(() -> {
+    opController.povDown().onTrue(Commands.runOnce(() -> {
       climber.setClimberState(CLIMBER_STATES.DOWN);
     }, climber));
-    driverController.povRight().onTrue(Commands.runOnce(() -> {
+    opController.povRight().onTrue(Commands.runOnce(() -> {
       climber.setClimberState(CLIMBER_STATES.DOWNDOWN);
     }, climber));
 
-    driverController.rightTrigger(0.3).onTrue(new DropIntakeCommand(intake));
-    driverController.leftTrigger(0.3).onFalse(new InsideIntakeCommand(intake));
+    opController.rightTrigger(0.3).onTrue(new DropIntakeCommand(intake));
+    opController.leftTrigger(0.3).onFalse(new InsideIntakeCommand(intake));
 
     driverController.rightBumper().onTrue(new SequentialCommandGroup(
       new AimToGoalMode(swerve),
