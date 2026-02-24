@@ -3,32 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.8280000000000007,
-        "y": 3.2791666666666672
+        "x": 7.687760342368046,
+        "y": 5.011868758915835
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2690753857804355,
-        "y": 3.145997211447437
+        "x": 8.295877318116977,
+        "y": 6.473937232524964
       },
       "isLocked": false,
-      "linkedName": "B.hub.classific"
+      "linkedName": "DP - Mid intake"
     },
     {
       "anchor": {
-        "x": 1.4351071428571442,
-        "y": 2.760880952380953
+        "x": 2.745192582025677,
+        "y": 6.059900142653353
       },
       "prevControl": {
-        "x": 1.9714897532234548,
-        "y": 2.8954272094698177
+        "x": 3.3144935805991436,
+        "y": 8.86758915834522
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "B.lado.classific"
+      "linkedName": "DP - Shoot"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.7082395317424546,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -42,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 88.61360656489828
+    "rotation": 124.28687697720893
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Depot",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -147.85098264930414
+    "rotation": -91.73570458892863
   },
   "useDefaultConstraints": true
 }

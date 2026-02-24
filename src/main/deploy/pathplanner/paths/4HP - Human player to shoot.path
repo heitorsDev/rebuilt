@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.093761904761905,
-        "y": 4.661261904761904
+        "x": 0.4253509933774836,
+        "y": 0.7133377483443712
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4332834637746803,
-        "y": 4.722128613776421
+        "x": 1.2213223496942014,
+        "y": 1.2961663213971482
       },
       "isLocked": false,
-      "linkedName": "B.centro.Shoot"
+      "linkedName": "HP - Human player"
     },
     {
       "anchor": {
-        "x": 1.1111785714285722,
-        "y": 4.747642857142857
+        "x": 2.741619047625599,
+        "y": 2.436952380958179
       },
       "prevControl": {
-        "x": 1.502217650524861,
-        "y": 4.711311760570567
+        "x": 2.2239490473663737,
+        "y": 2.125133746294283
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "HP - Shooting pos"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -139.2577454262911
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Human player",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -177.61405596961112
   },
   "useDefaultConstraints": true
 }

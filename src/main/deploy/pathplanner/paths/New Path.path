@@ -3,45 +3,34 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.594630952380953,
-        "y": 0.7417261904761892
+        "x": 2.0,
+        "y": 7.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.815449540680638,
-        "y": 0.548984876385413
+        "x": 3.0,
+        "y": 7.0
       },
       "isLocked": false,
-      "linkedName": "B.start.classific"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.47411904761904866,
-        "y": 0.6769404761904776
+        "x": 2.0,
+        "y": 2.0
       },
       "prevControl": {
-        "x": 0.6744977488105386,
-        "y": 0.5274467435164569
+        "x": 1.0,
+        "y": 2.0
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "B.human.classific"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "pointTowardsZones": [
-    {
-      "fieldPosition": {
-        "x": 4.625,
-        "y": 4.025
-      },
-      "rotationOffset": 180.0,
-      "minWaypointRelativePos": 0.1935483870967742,
-      "maxWaypointRelativePos": 0.719602977667492,
-      "name": "Point Towards Zone"
-    }
-  ],
+  "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 2.5,
@@ -53,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -91.09655807023623
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Human player",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -0.22031080672923511
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

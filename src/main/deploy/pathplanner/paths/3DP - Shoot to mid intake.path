@@ -3,50 +3,39 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.47411904761904866,
-        "y": 0.6769404761904776
+        "x": 2.745192582025677,
+        "y": 6.059900142653353
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5056960821495204,
-        "y": 2.0734247852574885
+        "x": 3.7414693295292434,
+        "y": 9.216932952924394
       },
       "isLocked": false,
-      "linkedName": "B.human.classific"
+      "linkedName": "DP - Shoot"
     },
     {
       "anchor": {
-        "x": 2.8280000000000007,
-        "y": 3.2791666666666672
+        "x": 7.83008559201866,
+        "y": 4.675463623402886
       },
       "prevControl": {
-        "x": 2.5796547619047625,
-        "y": 3.1280000000000006
+        "x": 8.192368045649072,
+        "y": 5.917574893009986
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "B.hub.classific"
+      "linkedName": "DP - Mid intake 2"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5,
+      "waypointRelativePos": 0.2399819900945518,
       "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [],
-  "pointTowardsZones": [
-    {
-      "fieldPosition": {
-        "x": 4.63,
-        "y": 4.025
-      },
-      "rotationOffset": 180.0,
-      "minWaypointRelativePos": 0.21935483870967193,
-      "maxWaypointRelativePos": 0.8188585607940415,
-      "name": "Point Towards Zone"
-    }
-  ],
+  "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 2.5,
@@ -58,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -147.85098264930414
+    "rotation": -79.15969454487606
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Depot",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -91.09655807023623
+    "rotation": 124.28687697720893
   },
   "useDefaultConstraints": true
 }

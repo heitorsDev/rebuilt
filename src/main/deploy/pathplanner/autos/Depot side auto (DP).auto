@@ -1,0 +1,62 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "1DP - Start to mid intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "DropIntakeCommand"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2DP - Mid intake to shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "TimedIndexCommand"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3DP - Shoot to mid intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4DP - Mid intake to shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "TimedIndexCommand"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
