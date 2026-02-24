@@ -3,17 +3,17 @@ package frc.robot.commands.swerveCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
-public class AimToGoalMode extends Command {
+public class AimForFeedMode extends Command {
     SwerveSubsystem swerve;
 
-    public AimToGoalMode(SwerveSubsystem swerve){
+    public AimForFeedMode(SwerveSubsystem swerve){
         this.swerve = swerve;
         addRequirements(swerve);
     }
 
     @Override
     public void initialize() {
-        swerve.aimToGoal();
+        swerve.aimForFeeding();
     }
 
     @Override

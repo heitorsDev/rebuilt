@@ -5,6 +5,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Indexer extends SubsystemBase{
@@ -32,7 +33,7 @@ public class Indexer extends SubsystemBase{
                 belt.set(IndexerConstants.beltPower);
                 break;
         }
-        
+        SmartDashboard.putNumber("Indexer velocity", indexer.getEncoder().getVelocity());
 
     }
     public void setIndexerState(INDEXER_STATES indexerState){

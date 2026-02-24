@@ -6,6 +6,8 @@ import frc.robot.commands.indexerCommands.TimedIndexCommand;
 import frc.robot.commands.indexerCommands.DeIndexCommand;
 import frc.robot.commands.intakeCommands.DropIntakeCommand;
 import frc.robot.commands.intakeCommands.InsideIntakeCommand;
+import frc.robot.commands.shooterCommands.SetShooterState;
+import frc.robot.commands.swerveCommands.AimForFeedMode;
 import frc.robot.commands.swerveCommands.AimToGoalMode;
 import frc.robot.commands.swerveCommands.UnlockDrivingMode;
 import frc.robot.subsystems.Climber.Climber;
@@ -13,15 +15,26 @@ import frc.robot.subsystems.Climber.Climber.CLIMBER_STATES;
 import frc.robot.subsystems.Indexer.Indexer;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.Shooter.Shooter.SHOOTER_STATES;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.Field.Field;
+import java.util.Optional;
 
+import com.ctre.phoenix.led.Animation;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
@@ -31,20 +44,32 @@ public class RobotContainer {
   private final CommandXboxController opController = new CommandXboxController(1);
   private final Intake intake = new Intake();
   private final Indexer indexer = new Indexer();
-  private final SwerveSubsystem swerve = new SwerveSubsystem();
-  private final Shooter shooter = new Shooter(swerve::getPose, opController::getRightY);
+  private final Field field = new Field();
+  private final SwerveSubsystem swerve = new SwerveSubsystem(field::getHubPose);
+  private final Shooter shooter = new Shooter(swerve::getPose, field::getHubPose, swerve::getCurrentFeedingPose);
   private final Climber climber = new Climber(opController::getLeftY);
 
-
+  private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
+    CameraServer.startAutomaticCapture();
+    HttpCamera frontWebCam = new HttpCamera("front-webcam", "http://10.101.90.11:1181/stream.mjpeg");
+    CameraServer.addCamera(frontWebCam);
+
+    CameraServer.addServer("limelight-stream")
+        .setSource(new HttpCamera("limelight", "http://limelight.local:5800/stream.mjpeg"));
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData(autoChooser);
+
     NamedCommands.registerCommand("DropIntakeCommand", new DropIntakeCommand(intake));
     NamedCommands.registerCommand("InsideIntakeCommand", new InsideIntakeCommand(intake));
     NamedCommands.registerCommand("IndexCommand", new IndexCommand(indexer));
     NamedCommands.registerCommand("DeIndexCommand", new DeIndexCommand(indexer));
-    NamedCommands.registerCommand("TimedIndexCommand", new TimedIndexCommand(indexer,swerve, 3));
-    //MUDAR DEPOIS
-    NamedCommands.registerCommand("ClimbCommand", Commands.runOnce(()->{climber.setClimberState(CLIMBER_STATES.DOWN);}, climber));
+    NamedCommands.registerCommand("TimedIndexCommand", new TimedIndexCommand(indexer, swerve, 3, shooter));
+    // MUDAR DEPOIS
+    NamedCommands.registerCommand("ClimbCommand", Commands.runOnce(() -> {
+      climber.setClimberState(CLIMBER_STATES.DOWN);
+    }, climber));
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
   }
@@ -62,21 +87,45 @@ public class RobotContainer {
 
     driverController.start().onTrue(Commands.runOnce(swerve::zeroGyro));
 
-    driverController.povUp().onTrue(Commands.runOnce(()->{climber.setClimberState(CLIMBER_STATES.UP);}, climber));
-    driverController.povDown().onTrue(Commands.runOnce(()->{climber.setClimberState(CLIMBER_STATES.DOWN);}, climber));
-    driverController.povRight().onTrue(Commands.runOnce(()->{climber.setClimberState(CLIMBER_STATES.DOWNDOWN);}, climber));
+    driverController.povUp().onTrue(Commands.runOnce(() -> {
+      climber.setClimberState(CLIMBER_STATES.UP);
+    }, climber));
+    driverController.povDown().onTrue(Commands.runOnce(() -> {
+      climber.setClimberState(CLIMBER_STATES.DOWN);
+    }, climber));
+    driverController.povRight().onTrue(Commands.runOnce(() -> {
+      climber.setClimberState(CLIMBER_STATES.DOWNDOWN);
+    }, climber));
 
-    driverController.leftTrigger(0.3).toggleOnTrue(new DropIntakeCommand(intake));
-    driverController.leftTrigger(0.3).toggleOnFalse(new InsideIntakeCommand(intake));
+    driverController.rightTrigger(0.3).onTrue(new DropIntakeCommand(intake));
+    driverController.leftTrigger(0.3).onFalse(new InsideIntakeCommand(intake));
 
-    driverController.leftBumper().onTrue(new AimToGoalMode(swerve));
-    driverController.leftBumper().onFalse(new UnlockDrivingMode(swerve));
+    driverController.rightBumper().onTrue(new SequentialCommandGroup(
+      new AimToGoalMode(swerve),
+      new SetShooterState(shooter, SHOOTER_STATES.TUNING),
+      new IndexCommand(indexer)
+    ));
+    driverController.rightBumper().onFalse(new 
+    SequentialCommandGroup(
+      new UnlockDrivingMode(swerve),
+      new DeIndexCommand(indexer)
+    ));
     
-    driverController.rightBumper().onTrue(new IndexCommand(indexer));
-    driverController.rightBumper().onFalse(new DeIndexCommand(indexer));
+    driverController.leftBumper().onTrue(new SequentialCommandGroup(
+      new AimForFeedMode(swerve),
+      new SetShooterState(shooter, SHOOTER_STATES.TUNING),
+      new IndexCommand(indexer)
+    ));
+    driverController.leftBumper().onFalse(new 
+    SequentialCommandGroup(
+      new UnlockDrivingMode(swerve),
+      new DeIndexCommand(indexer)
+    ));
+
   }
 
+
   public Command getAutonomousCommand() {
-    return swerve.getAutonomousCommand("Human player side (HP)");
+    return AutoBuilder.buildAuto("Human player side (HP)");
   }
 }
