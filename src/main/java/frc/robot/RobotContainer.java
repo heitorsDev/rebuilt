@@ -3,6 +3,8 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.indexerCommands.IndexCommand;
 import frc.robot.commands.indexerCommands.TimedIndexCommand;
+import frc.robot.commands.climberCommands.ClimbSequence;
+import frc.robot.commands.climberCommands.SetClimberState;
 import frc.robot.commands.indexerCommands.DeIndexCommand;
 import frc.robot.commands.intakeCommands.DropIntakeCommand;
 import frc.robot.commands.intakeCommands.InsideIntakeCommand;
@@ -87,15 +89,9 @@ public class RobotContainer {
 
     driverController.start().onTrue(Commands.runOnce(swerve::zeroGyro));
 
-    opController.povUp().onTrue(Commands.runOnce(() -> {
-      climber.setClimberState(CLIMBER_STATES.UP);
-    }, climber));
-    opController.povDown().onTrue(Commands.runOnce(() -> {
-      climber.setClimberState(CLIMBER_STATES.DOWN);
-    }, climber));
-    opController.povRight().onTrue(Commands.runOnce(() -> {
-      climber.setClimberState(CLIMBER_STATES.DOWNDOWN);
-    }, climber));
+    opController.povUp().onTrue(new SetClimberState(climber, CLIMBER_STATES.UP));
+    opController.povDown().onTrue(new ClimbSequence(climber, intake));
+    opController.povRight().onTrue(new SetClimberState(climber, CLIMBER_STATES.DOWNDOWN));
 
     opController.rightTrigger(0.3).onTrue(new DropIntakeCommand(intake));
     opController.leftTrigger(0.3).onFalse(new InsideIntakeCommand(intake));

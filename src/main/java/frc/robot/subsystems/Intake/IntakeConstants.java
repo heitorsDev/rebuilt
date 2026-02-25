@@ -7,8 +7,7 @@ public class IntakeConstants {
     public static double kI = 0;
     public static double kD = 0;
 
-    public static double intakePower = .25
-    ;
+    public static double intakePower = .25;
     
     public static double defaultPivotSP = 0;
     public static double dropPivotSP = 12.3;
