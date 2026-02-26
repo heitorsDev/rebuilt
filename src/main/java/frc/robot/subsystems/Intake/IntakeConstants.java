@@ -12,4 +12,6 @@ public class IntakeConstants {
     public static double defaultPivotSP = 0;
     public static double dropPivotSP = 12;
 
+    public static double intakeStuckTimeMilis = 1000; //time for the intake be considered stuck
+
 }

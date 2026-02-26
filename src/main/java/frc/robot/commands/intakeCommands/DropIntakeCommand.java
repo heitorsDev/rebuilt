@@ -21,6 +21,9 @@ public class DropIntakeCommand extends Command {
 
     @Override
     public void execute() {
+        if (intake.isStuck()){
+
+        }
     }
 
     @Override
