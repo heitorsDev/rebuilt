@@ -97,8 +97,8 @@ public class RobotContainer {
     opController.leftTrigger(0.3).onFalse(new InsideIntakeCommand(intake));
 
     driverController.rightBumper().onTrue(new SequentialCommandGroup(
+      new SetShooterState(shooter, SHOOTER_STATES.HUB),
       new AimToGoalMode(swerve),
-      new SetShooterState(shooter, SHOOTER_STATES.TUNING),
       new IndexCommand(indexer)
     ));
     driverController.rightBumper().onFalse(new 
@@ -108,8 +108,8 @@ public class RobotContainer {
     ));
     
     driverController.leftBumper().onTrue(new SequentialCommandGroup(
+      new SetShooterState(shooter, SHOOTER_STATES.FEED),
       new AimForFeedMode(swerve),
-      new SetShooterState(shooter, SHOOTER_STATES.TUNING),
       new IndexCommand(indexer)
     ));
     driverController.leftBumper().onFalse(new 

@@ -56,7 +56,7 @@ public class SwerveSubsystem extends SubsystemBase {
   private DRIVING_STATES drivingState = DRIVING_STATES.TELE;
   private Pose2d poseToAim = new Pose2d(0, 0, new Rotation2d(0));
 
-  PIDController angularPID = new PIDController(3, 0, 0);
+  PIDController angularPID = new PIDController(4, 0, 0);
 
   public void unlockAim() {
     this.drivingState = DRIVING_STATES.TELE;
@@ -115,6 +115,9 @@ public class SwerveSubsystem extends SubsystemBase {
                 this.getHeading()));
         break;
     }
+  }
+  public boolean angularPIDStable(double tolerance ){
+    return Math.abs(angularPID.getError())<Math.toRadians(tolerance);
   }
   private Supplier<Pose2d> hubPoseSupplier;
   public SwerveSubsystem(Supplier<Pose2d> hubPoseSupplier) {

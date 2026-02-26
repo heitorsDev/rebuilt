@@ -11,8 +11,10 @@ import com.revrobotics.PersistMode;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.DoubleEntry;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
@@ -21,10 +23,8 @@ public class Shooter extends SubsystemBase {
     private final Supplier<Pose2d> feedingPoseSupplier;
     private final Supplier<Pose2d> hubPoseSupplier; // FIX: moved to correct position
 
-    private final SparkFlex rightShooter =
-            new SparkFlex(ShooterConstants.right_shooter_id, MotorType.kBrushless);
-    private final SparkFlex leftShooter =
-            new SparkFlex(ShooterConstants.left_shooter_id, MotorType.kBrushless);
+    private final SparkFlex rightShooter = new SparkFlex(ShooterConstants.right_shooter_id, MotorType.kBrushless);
+    private final SparkFlex leftShooter = new SparkFlex(ShooterConstants.left_shooter_id, MotorType.kBrushless);
 
     private double targetRPM = 0;
     private double hubDistance = 0;
@@ -36,32 +36,26 @@ public class Shooter extends SubsystemBase {
         TUNING
     }
 
-    private SHOOTER_STATES currentShooterState = SHOOTER_STATES.TUNING;
+    private SHOOTER_STATES currentShooterState = SHOOTER_STATES.HUB;
 
-    private final NetworkTable shooterTable =
-            NetworkTableInstance.getDefault().getTable("Shooter");
+    private final NetworkTable shooterTable = NetworkTableInstance.getDefault().getTable("Shooter");
 
-    private final DoubleEntry ntTuningRPM =
-            shooterTable.getDoubleTopic("TuningRPM").getEntry(6000);
+    private final DoubleEntry ntTuningRPM = shooterTable.getDoubleTopic("TuningRPM").getEntry(6000);
 
-    private final DoubleEntry ntRealRPMRight =
-            shooterTable.getDoubleTopic("RealRPMRight").getEntry(0);
+    private final DoubleEntry ntRealRPMRight = shooterTable.getDoubleTopic("RealRPMRight").getEntry(0);
 
-    private final DoubleEntry ntRealRPMLeft =
-            shooterTable.getDoubleTopic("RealRPMLeft").getEntry(0);
+    private final DoubleEntry ntRealRPMLeft = shooterTable.getDoubleTopic("RealRPMLeft").getEntry(0);
 
-    private final DoubleEntry ntTargetRPM =
-            shooterTable.getDoubleTopic("TargetRPM").getEntry(0);
+    private final DoublePublisher ntTargetRPM = shooterTable.getDoubleTopic("TargetRPM").getEntry(0);
 
-    private final DoubleEntry ntDistance =
-            shooterTable.getDoubleTopic("Distance").getEntry(0);
+    private final DoublePublisher ntDistance = shooterTable.getDoubleTopic("Distance").getEntry(0);
 
-    private final DoubleEntry ntRPMError =
-            shooterTable.getDoubleTopic("RPMError").getEntry(0);
+    private final DoubleEntry ntRPMError = shooterTable.getDoubleTopic("RPMError").getEntry(0);
 
-    public Shooter(Supplier<Pose2d> poseSupplier, Supplier<Pose2d> hubPoseSupplier, Supplier<Pose2d> feedingPoseSupplier) {
+    public Shooter(Supplier<Pose2d> poseSupplier, Supplier<Pose2d> hubPoseSupplier,
+            Supplier<Pose2d> feedingPoseSupplier) {
         this.poseSupplier = poseSupplier;
-        this.hubPoseSupplier = hubPoseSupplier;       // FIX: was incorrectly assigned poseSupplier
+        this.hubPoseSupplier = hubPoseSupplier; // FIX: was incorrectly assigned poseSupplier
         this.feedingPoseSupplier = feedingPoseSupplier;
 
         SparkMaxConfig config = new SparkMaxConfig();
@@ -79,10 +73,9 @@ public class Shooter extends SubsystemBase {
         ntTuningRPM.set(5000);
     }
 
-    public void setVelocity(double rpm) {
+    private void setVelocity(double rpm) {
         targetRPM = rpm;
-        rightShooter.getClosedLoopController().setSetpoint(rpm, SparkFlex.ControlType.kVelocity);
-        leftShooter.getClosedLoopController().setSetpoint(rpm, SparkFlex.ControlType.kVelocity);
+
     }
 
     public double getVelocityRight() {
@@ -119,23 +112,35 @@ public class Shooter extends SubsystemBase {
         feedingDistance = Math.hypot(dx, dy); // FIX: was writing to hubDistance instead of feedingDistance
     }
 
+    double targetRPM2 = 0;
+
     private void updatePower() {
+        SmartDashboard.putNumber("distance at calculation", hubDistance);
+        SmartDashboard.putNumber("velocity estimated", ShooterConstants.RPMinterpolation.get(hubDistance)[1]);
+        targetRPM2 = ShooterConstants.RPMinterpolation.get(hubDistance)[1];
         switch (currentShooterState) {
             case TUNING -> {
                 double tuningRPM = ntTuningRPM.get();
                 setVelocity(tuningRPM);
             }
-            case HUB -> setVelocity(ShooterConstants.RPMinterpolation.get(hubDistance));
-            case FEED -> setVelocity(ShooterConstants.RPMinterpolation.get(feedingDistance));
+            case HUB -> {
+                targetRPM2 = ShooterConstants.RPMinterpolation.get(hubDistance)[1];
+                System.out.println(hubDistance);
+                setVelocity(ShooterConstants.RPMinterpolation.get(hubDistance)[1]);
+            }
+            case FEED -> {
+                targetRPM2 = ShooterConstants.RPMinterpolation.get(feedingDistance)[1];
+                setVelocity(ShooterConstants.RPMinterpolation.get(feedingDistance)[1]);
+            }
         }
     }
 
     private void updateTelemetry() {
         ntRealRPMRight.set(getVelocityRight());
         ntRealRPMLeft.set(getVelocityLeft());
-        ntTargetRPM.set(targetRPM);
+        ntTargetRPM.set(targetRPM2);
         ntDistance.set(hubDistance);
-        ntRPMError.set(getVelocityRight() - targetRPM); // FIX: ntRPMError was never being set
+        ntRPMError.set(getVelocityRight() - targetRPM);
 
         shooterTable.getEntry("State").setString(currentShooterState.name());
         shooterTable.getEntry("AtSpeed").setBoolean(atSpeed(100));
@@ -143,9 +148,13 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-        updateHubDistance();    // FIX: reordered — hub first, then feeding, so hubDistance isn't
-        updateFeedingDistance(); //      overwritten before telemetry reads it
+        updateHubDistance();
+        updateFeedingDistance();
         updatePower();
+        SmartDashboard.putNumber("rpm before", targetRPM2);
+        rightShooter.getClosedLoopController().setSetpoint(targetRPM2, SparkFlex.ControlType.kVelocity);
+        leftShooter.getClosedLoopController().setSetpoint(targetRPM2, SparkFlex.ControlType.kVelocity);
         updateTelemetry();
+
     }
 }

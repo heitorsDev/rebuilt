@@ -4,58 +4,64 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 public final class ShootingInterpLUT {
+double[][] table;
 
-    private final double[] inputs;
-    private final double[] outputs;
-    private final int size;
+  /**
+   * Create a look up table using a nested list <br>
+   * Assumes key values are in increasing order, and does not sort them for you. <br>
+   * Assumes 2 or more rows, and an equal number of columns. <br>
+   * Example:
+   *
+   * <pre lang="java">
+   * var lut = LUT(new double[][]{{
+   * {0,1,2},
+   * {1,2,4},
+   * {3,6,36}
+   * });
+   * lut.get(2); // would yield {2,4,20}
+   * </pre>
+   *
+   * @param table of interpolated values
+   */
+  public ShootingInterpLUT(double[][] table) {
+    this.table = table;
+  }
 
-    public ShootingInterpLUT(double[][] registers) {
-        if (registers == null || registers.length < 2) {
-            throw new IllegalArgumentException("Interpolation requires at least 2 points.");
-        }
-
-        double[][] sorted = Arrays.copyOf(registers, registers.length);
-        Arrays.sort(sorted, Comparator.comparingDouble(a -> a[0]));
-
-        size = sorted.length;
-        inputs = new double[size];
-        outputs = new double[size];
-
-        for (int i = 0; i < size; i++) {
-            inputs[i] = sorted[i][0];
-            outputs[i] = sorted[i][1];
-        }
+  /**
+   * @param key
+   * @return row of interpolated values {key,val1,val2....}
+   */
+  public double[] get(double key) {
+    // if we're smaller than our smallest key, return smallest value
+    if (key < table[0][0]) {
+      return Arrays.copyOfRange(table[0], 0, table[0].length);
     }
 
-    public double get(double input) {
-        if (input <= inputs[0]) return outputs[0];
-        if (input >= inputs[size - 1]) return outputs[size - 1];
-
-        int low = 0;
-        int high = size - 1;
-
-        while (low <= high) {
-            int mid = (low + high) >>> 1;
-
-            if (inputs[mid] < input) {
-                low = mid + 1;
-            } else if (inputs[mid] > input) {
-                high = mid - 1;
-            } else {
-                return outputs[mid];
-            }
-        }
-
-        int lower = high;
-        int upper = low;
-
-        double x1 = inputs[lower];
-        double y1 = outputs[lower];
-        double x2 = inputs[upper];
-        double y2 = outputs[upper];
-
-        if (x2 - x1 == 0) return y1;
-
-        return y1 + (input - x1) * (y2 - y1) / (x2 - x1);
+    // if we're larger than our largest value, return largest value
+    if (key > table[table.length - 1][0]) {
+      return Arrays.copyOfRange(table[table.length - 1], 0, table[table.length - 1].length);
     }
+
+    // with those out of the way, we can safely assume we're in between two points that exist.
+    // Find it, split the difference
+    for (var row = 0; row < table.length - 1; row++) {
+
+      // Check to see if the _next_ row is larger than our key value.
+      // This implies the current row value is the one below it.
+      if (table[row + 1][0] > key) {
+        // Interpolate between this row and the next, and return those values
+        double[] value = new double[table[row].length];
+        value[0] = key;
+        for (var col = 1; col < table[row].length; col++) {
+          value[col] =
+              Lerp.lerp(
+                  key, table[row][0], table[row + 1][0], table[row][col], table[row + 1][col]);
+        }
+        return value;
+      }
+    }
+
+    // This should be unreachable, but returns the last list item
+    return Arrays.copyOfRange(table[table.length - 1], 0, table[table.length - 1].length);
+  }
 }
