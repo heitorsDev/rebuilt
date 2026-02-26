@@ -71,7 +71,7 @@ public class Intake extends SubsystemBase {
                 pivotSP = IntakeConstants.dropPivotSP;
                 break;
         }
-
+        
         pivot.getClosedLoopController().setSetpoint(
             pivotSP,
             SparkMax.ControlType.kPosition
@@ -94,5 +94,9 @@ public class Intake extends SubsystemBase {
 
     public void setPivotState(PIVOT_STATES state) {
         currentPivotState = state;
+    }
+    public boolean isStuck() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isStuck'");
     }
 }
