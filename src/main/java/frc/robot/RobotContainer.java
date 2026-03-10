@@ -14,6 +14,7 @@ import frc.robot.commands.swerveCommands.AimForFeedMode;
 import frc.robot.commands.swerveCommands.AimToGoalMode;
 import frc.robot.commands.swerveCommands.UnlockDrivingMode;
 import frc.robot.commands.swerveCommands.ZoneBaseAimMode;
+import frc.robot.commands.teleOpSequences.ShootingSequence;
 import frc.robot.subsystems.Climber.Climber;
 import frc.robot.subsystems.Climber.Climber.CLIMBER_STATES;
 import frc.robot.subsystems.Indexer.Indexer;
@@ -99,47 +100,18 @@ public class RobotContainer {
     opController.leftTrigger(0.3).onFalse(new InsideIntakeCommand(intake));
 
     driverController.rightTrigger(0.5).onTrue(new MidIntakeCommand(intake));
-    driverController.rightTrigger(0.5).onTrue(new DropIntakeCommand(intake)); //perguntar pro enzo
+    driverController.rightTrigger(0.5).onTrue(new DropIntakeCommand(intake)); // perguntar pro enzo
 
+    driverController.rightBumper().onTrue(new ShootingSequence.Hub(indexer, intake, shooter, swerve));
+    driverController.rightBumper().onFalse(new ShootingSequence.UnlockAim(indexer, intake, shooter, swerve));
 
-    driverController.rightBumper().onTrue(new SequentialCommandGroup(
-      new SetShooterState(shooter, SHOOTER_STATES.HUB),
-      new AimToGoalMode(swerve),
-      new IndexCommand(indexer)
-    ));
-    driverController.rightBumper().onFalse(new 
-    SequentialCommandGroup(
-      new UnlockDrivingMode(swerve),
-      new DropIntakeCommand(intake),
-      new DeIndexCommand(indexer)
-    ));
-    
-    driverController.leftBumper().onTrue(new SequentialCommandGroup(
-      new SetShooterState(shooter, SHOOTER_STATES.FEED),
-      new AimForFeedMode(swerve),
-      new IndexCommand(indexer)
-    ));
-    driverController.leftBumper().onFalse(new 
-    SequentialCommandGroup(
-      new UnlockDrivingMode(swerve),
-      new DeIndexCommand(indexer)
-    ));
-    
+    driverController.leftBumper().onTrue(new ShootingSequence.Feed(indexer, intake, shooter, swerve));
+    driverController.leftBumper().onFalse(new ShootingSequence.UnlockAim(indexer, intake, shooter, swerve));
 
- driverController.leftTrigger(0.5).onTrue(new SequentialCommandGroup(
-      new SetShooterState(shooter, SHOOTER_STATES.HUB),
-      new ZoneBaseAimMode(swerve),
-      new IndexCommand(indexer)
-    ));
-    driverController.leftTrigger(0.5).onFalse(new 
-    SequentialCommandGroup(
-      new UnlockDrivingMode(swerve),
-      new DropIntakeCommand(intake),
-      new DeIndexCommand(indexer)
-    ));
+    driverController.leftTrigger(0.5).onTrue(new ShootingSequence.Hub(indexer, intake, shooter, swerve));
+    driverController.leftTrigger(0.5).onFalse(new ShootingSequence.UnlockAim(indexer, intake, shooter, swerve));
 
   }
-
 
   public Command getAutonomousCommand() {
     return AutoBuilder.buildAuto("Human player side (HP)");
