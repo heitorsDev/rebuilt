@@ -8,6 +8,7 @@ import frc.robot.commands.climberCommands.SetClimberState;
 import frc.robot.commands.indexerCommands.DeIndexCommand;
 import frc.robot.commands.intakeCommands.DropIntakeCommand;
 import frc.robot.commands.intakeCommands.InsideIntakeCommand;
+import frc.robot.commands.intakeCommands.MidIntakeCommand;
 import frc.robot.commands.shooterCommands.SetShooterState;
 import frc.robot.commands.swerveCommands.AimForFeedMode;
 import frc.robot.commands.swerveCommands.AimToGoalMode;
@@ -98,12 +99,14 @@ public class RobotContainer {
 
     driverController.rightBumper().onTrue(new SequentialCommandGroup(
       new SetShooterState(shooter, SHOOTER_STATES.HUB),
+      new MidIntakeCommand(intake),
       new AimToGoalMode(swerve),
       new IndexCommand(indexer)
     ));
     driverController.rightBumper().onFalse(new 
     SequentialCommandGroup(
       new UnlockDrivingMode(swerve),
+      new DropIntakeCommand(intake),
       new DeIndexCommand(indexer)
     ));
     

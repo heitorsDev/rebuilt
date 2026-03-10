@@ -8,7 +8,6 @@ public class AimToGoalMode extends Command {
 
     public AimToGoalMode(SwerveSubsystem swerve){
         this.swerve = swerve;
-        addRequirements(swerve);
     }
 
     @Override
@@ -27,6 +26,6 @@ public class AimToGoalMode extends Command {
     @Override
     public boolean isFinished() {
         
-        return swerve.angularPIDStable(10);
+        return swerve.angularPIDStable(5);
     }
 }

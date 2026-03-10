@@ -16,17 +16,15 @@ public class Intake extends SubsystemBase {
     public enum ROLLER_STATES {
         ON, OFF
     }
+
     private ROLLER_STATES currentRollerState = ROLLER_STATES.OFF;
 
     public enum PIVOT_STATES {
-        INSIDE, DROP
+        INSIDE, DROP, MID
     }
 
-
-    
     private PIVOT_STATES currentPivotState = PIVOT_STATES.INSIDE;
 
-  
     private SparkMax pivot = new SparkMax(IntakeConstants.pivot_id, MotorType.kBrushless);
     private TalonFX roller = new TalonFX(IntakeConstants.roller_id);
 
@@ -40,10 +38,9 @@ public class Intake extends SubsystemBase {
         ClosedLoopConfig pid = config.closedLoop;
 
         pid.pid(
-            IntakeConstants.kP,
-            IntakeConstants.kI,
-            IntakeConstants.kD
-        );
+                IntakeConstants.kP,
+                IntakeConstants.kI,
+                IntakeConstants.kD);
 
         pid.outputRange(-1, 1);
 
@@ -52,6 +49,7 @@ public class Intake extends SubsystemBase {
 
         pivot.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
+
     @Override
     public void periodic() {
         switch (currentRollerState) {
@@ -70,23 +68,28 @@ public class Intake extends SubsystemBase {
             case DROP:
                 pivotSP = IntakeConstants.dropPivotSP;
                 break;
+            case MID:
+                pivotSP = IntakeConstants.midPivotSP;
+                break;
+            default:
+                break;
         }
-        
+
         pivot.getClosedLoopController().setSetpoint(
-            pivotSP,
-            SparkMax.ControlType.kPosition
-        );
+                pivotSP,
+                SparkMax.ControlType.kPosition);
 
         SmartDashboard.putNumber("Intake pivot position:", pivot.getEncoder().getPosition());
         SmartDashboard.putString("Intake roller state: ", this.currentRollerState.name());
         SmartDashboard.putString("Intake pivot state: ", this.currentPivotState.name());
         SmartDashboard.putBoolean("Intake pivot at position:", this.atPosition());
     }
+
     double pivotSP = 0;
-    public boolean atPosition(){
+
+    public boolean atPosition() {
         return pivot.getClosedLoopController().isAtSetpoint();
     }
-
 
     public void setRollerState(ROLLER_STATES state) {
         currentRollerState = state;
@@ -95,8 +98,19 @@ public class Intake extends SubsystemBase {
     public void setPivotState(PIVOT_STATES state) {
         currentPivotState = state;
     }
+
+    private double lastStuckTime;
+
     public boolean isStuck() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isStuck'");
+        double currentTime = edu.wpi.first.wpilibj.Timer.getFPGATimestamp() * 1000;
+
+        // Only check when we're actively trying to drop
+        if (currentPivotState == PIVOT_STATES.INSIDE || atPosition()) {
+            lastStuckTime = currentTime;
+            return false;
+        }
+
+        // Not at position but time has elapsed — stuck
+        return (currentTime - lastStuckTime) > IntakeConstants.intakeStuckTimeMilis;
     }
 }

@@ -15,9 +15,9 @@ public final class ShooterConstants {
     public static final double shooterkV = 0.00018;
 
     public static final double[][] RPMtable = {
-        {2, 3800},
-        {2.5, 4000},
-        {3.0,5000}
+        {2, 3400},
+        {2.5, 3700},
+        {3.0,4500}
     };
 
     public static final ShootingInterpLUT RPMinterpolation =

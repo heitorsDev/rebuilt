@@ -8,7 +8,6 @@ public class AimForFeedMode extends Command {
 
     public AimForFeedMode(SwerveSubsystem swerve){
         this.swerve = swerve;
-        addRequirements(swerve);
     }
 
     @Override

@@ -6,14 +6,17 @@ import frc.robot.subsystems.Climber.Climber.CLIMBER_STATES;
 
 public class SetClimberState extends Command{
     Climber climber;
+    CLIMBER_STATES state;
+
     public SetClimberState(Climber climber, CLIMBER_STATES state){
         this.climber = climber;
-        climber.setClimberState(state);
+        this.state = state;
         addRequirements(climber);
     }
     
     @Override
     public void initialize() {
+        climber.setClimberState(state);
         
     }
 
