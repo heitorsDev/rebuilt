@@ -9,6 +9,8 @@ import frc.robot.commands.indexerCommands.DeIndexCommand;
 import frc.robot.commands.intakeCommands.DropIntakeCommand;
 import frc.robot.commands.intakeCommands.InsideIntakeCommand;
 import frc.robot.commands.intakeCommands.MidIntakeCommand;
+import frc.robot.commands.intakeCommands.TurnIntakeOff;
+import frc.robot.commands.intakeCommands.TurnIntakeOn;
 import frc.robot.commands.shooterCommands.SetShooterState;
 import frc.robot.commands.swerveCommands.AimForFeedMode;
 import frc.robot.commands.swerveCommands.AimToGoalMode;
@@ -98,6 +100,8 @@ public class RobotContainer {
 
     opController.rightTrigger(0.3).onTrue(new DropIntakeCommand(intake));
     opController.leftTrigger(0.3).onFalse(new InsideIntakeCommand(intake));
+    opController.x().onTrue(new TurnIntakeOn(intake));
+    opController.x().onFalse(new TurnIntakeOff(intake));
 
     driverController.rightTrigger(0.5).onTrue(new MidIntakeCommand(intake));
     driverController.rightTrigger(0.5).onTrue(new DropIntakeCommand(intake)); // perguntar pro enzo
