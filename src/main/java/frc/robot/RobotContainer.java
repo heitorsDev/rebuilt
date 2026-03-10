@@ -11,37 +11,24 @@ import frc.robot.commands.intakeCommands.InsideIntakeCommand;
 import frc.robot.commands.intakeCommands.MidIntakeCommand;
 import frc.robot.commands.intakeCommands.TurnIntakeOff;
 import frc.robot.commands.intakeCommands.TurnIntakeOn;
-import frc.robot.commands.shooterCommands.SetShooterState;
-import frc.robot.commands.swerveCommands.AimForFeedMode;
-import frc.robot.commands.swerveCommands.AimToGoalMode;
-import frc.robot.commands.swerveCommands.UnlockDrivingMode;
-import frc.robot.commands.swerveCommands.ZoneBaseAimMode;
 import frc.robot.commands.teleOpSequences.ShootingSequence;
 import frc.robot.subsystems.Climber.Climber;
 import frc.robot.subsystems.Climber.Climber.CLIMBER_STATES;
 import frc.robot.subsystems.Indexer.Indexer;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Shooter.Shooter;
-import frc.robot.subsystems.Shooter.Shooter.SHOOTER_STATES;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.Field.Field;
-import java.util.Optional;
-
-import com.ctre.phoenix.led.Animation;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.HttpCamera;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
@@ -53,7 +40,7 @@ public class RobotContainer {
   private final Indexer indexer = new Indexer();
   private final Field field = new Field();
   private final SwerveSubsystem swerve = new SwerveSubsystem(field::getHubPose);
-  private final Shooter shooter = new Shooter(swerve::getPose, field::getHubPose, swerve::getCurrentFeedingPose);
+  private final Shooter shooter = new Shooter(swerve::getVirtualBotPose, field::getHubPose, swerve::getCurrentFeedingPose);
   private final Climber climber = new Climber(opController::getLeftY);
 
   private final SendableChooser<Command> autoChooser;
@@ -104,7 +91,7 @@ public class RobotContainer {
     opController.x().onFalse(new TurnIntakeOff(intake));
 
     driverController.rightTrigger(0.5).onTrue(new MidIntakeCommand(intake));
-    driverController.rightTrigger(0.5).onTrue(new DropIntakeCommand(intake)); // perguntar pro enzo
+    driverController.rightTrigger(0.5).onFalse(new DropIntakeCommand(intake)); // perguntar pro enzo
 
     driverController.rightBumper().onTrue(new ShootingSequence.Hub(indexer, intake, shooter, swerve));
     driverController.rightBumper().onFalse(new ShootingSequence.UnlockAim(indexer, intake, shooter, swerve));

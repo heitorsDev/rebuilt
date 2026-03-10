@@ -26,7 +26,7 @@ public class ShootingSequence {
                     new SetShooterState(shooter, SHOOTER_STATES.FEED),
                     new AimToGoalMode(swerve),
                     new IndexCommand(indexer));
-            addRequirements(indexer, intake, swerve, shooter);
+            addRequirements(indexer, intake,  shooter);
         }
     }
 
@@ -36,7 +36,7 @@ public class ShootingSequence {
                     new SetShooterState(shooter, SHOOTER_STATES.HUB),
                     new AimToGoalMode(swerve),
                     new IndexCommand(indexer));
-            addRequirements(indexer, intake, swerve, shooter);
+            addRequirements(indexer, intake, shooter);
         }
     }
 
@@ -46,7 +46,7 @@ public class ShootingSequence {
                     new SetShooterState(shooter, SHOOTER_STATES.HUB),
                     new ZoneBaseAimMode(swerve),
                     new IndexCommand(indexer));
-            addRequirements(indexer, intake, swerve, shooter);
+            addRequirements(indexer, intake,  shooter);
         }
     }
 
@@ -55,7 +55,7 @@ public class ShootingSequence {
             addCommands(
                     new UnlockDrivingMode(swerve),
                     new DeIndexCommand(indexer));
-            addRequirements(indexer, intake, swerve, shooter);
+            addRequirements(indexer, intake,  shooter);
         }
     }
 }

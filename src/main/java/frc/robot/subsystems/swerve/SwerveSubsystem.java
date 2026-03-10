@@ -44,7 +44,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private final SwerveDrive swerveDrive;
 
-  // Field2d para visualização no dashboard
   private final Field2d field = new Field2d();
 
   public enum DRIVING_STATES {
@@ -55,8 +54,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private DRIVING_STATES drivingState = DRIVING_STATES.TELE;
   private Pose2d poseToAim = new Pose2d(0, 0, new Rotation2d(0));
+  private Pose2d virtualBotPose = new Pose2d();
 
-  PIDController angularPID = new PIDController(3, 0, 0);
+  private static final double PREDICTION_CONSTANT = 1.5;
+
+  PIDController angularPID = new PIDController(6, 0, 0);
 
   public void unlockAim() {
     this.drivingState = DRIVING_STATES.TELE;
@@ -104,8 +106,8 @@ public class SwerveSubsystem extends SubsystemBase {
         break;
       case AUTO_HEADING:
         double angleToTarget = Math.atan2(
-            this.poseToAim.getY() - this.getPose().getY(),
-            this.poseToAim.getX() - this.getPose().getX());
+            this.poseToAim.getY() - this.getVirtualBotPose().getY(),
+            this.poseToAim.getX() - this.getVirtualBotPose().getX());
         double angleToAim = MathUtil.angleModulus(angleToTarget + Math.PI);
         angularPID.enableContinuousInput(-Math.PI, +Math.PI);
         this.drive(
@@ -155,7 +157,7 @@ public class SwerveSubsystem extends SubsystemBase {
   public void periodic() {
     UpdateVision();
     updateDashboardField();
-
+    updateVirtualBotPose();
   }
 
   private Pose2d lastVisionPose = new Pose2d(0, 0, new Rotation2d(0));
@@ -204,6 +206,29 @@ public class SwerveSubsystem extends SubsystemBase {
     } else {
       field.getObject("AimTarget").setPose(new Pose2d(-1, -1, new Rotation2d(0)));
     }
+  }
+
+  private void updateVirtualBotPose() {
+    ChassisSpeeds robotVelocity = swerveDrive.getRobotVelocity();
+    Pose2d currentPose = getPose();
+
+    Translation2d fieldRelativeVelocity = new Translation2d(
+        robotVelocity.vxMetersPerSecond,
+        robotVelocity.vyMetersPerSecond
+    ).rotateBy(currentPose.getRotation());
+
+    Translation2d predictedTranslation = currentPose.getTranslation().plus(
+        fieldRelativeVelocity.times(PREDICTION_CONSTANT)
+    );
+
+    Rotation2d predictedRotation = currentPose.getRotation();
+
+    virtualBotPose = new Pose2d(predictedTranslation, predictedRotation);
+    field.getObject("VirtualBot").setPose(virtualBotPose);
+  }
+
+  public Pose2d getVirtualBotPose() {
+    return virtualBotPose;
   }
 
   public void setupPathPlanner() {

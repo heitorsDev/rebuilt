@@ -26,6 +26,6 @@ public class AimToGoalMode extends Command {
     @Override
     public boolean isFinished() {
         
-        return swerve.angularPIDStable(5);
+        return swerve.angularPIDStable(15);
     }
 }
