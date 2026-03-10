@@ -4,6 +4,7 @@ import edu.wpi.first.apriltag.AprilTagPoseEstimator;
 import edu.wpi.first.apriltag.AprilTagPoseEstimator.Config;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.intakeCommands.DropIntakeCommand;
 import frc.robot.commands.intakeCommands.MidIntakeCommand;
 import frc.robot.commands.shooterCommands.SetShooterState;
 import frc.robot.commands.swerveCommands.AlignToGoal;
@@ -21,7 +22,8 @@ public class TimedIndexCommand extends SequentialCommandGroup{
             new MidIntakeCommand(intake),
             new IndexCommand(indexer),
             new WaitCommand(time),
-            new DeIndexCommand(indexer)
+            new DeIndexCommand(indexer),
+            new DropIntakeCommand(intake)
         );
         addRequirements(indexer, swerve, shooter, intake);
     }
