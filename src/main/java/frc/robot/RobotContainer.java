@@ -96,10 +96,13 @@ public class RobotContainer {
 
     opController.rightTrigger(0.3).onTrue(new DropIntakeCommand(intake));
     opController.leftTrigger(0.3).onFalse(new InsideIntakeCommand(intake));
+    
+    driverController.rightTrigger(0.5).onTrue(new MidIntakeCommand(intake));
+    driverController.rightTrigger(0.5).onTrue(new DropIntakeCommand(intake)); //perguntar pro enzo
+
 
     driverController.rightBumper().onTrue(new SequentialCommandGroup(
       new SetShooterState(shooter, SHOOTER_STATES.HUB),
-      new MidIntakeCommand(intake),
       new AimToGoalMode(swerve),
       new IndexCommand(indexer)
     ));
