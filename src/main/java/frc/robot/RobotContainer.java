@@ -68,7 +68,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("InsideIntakeCommand", new InsideIntakeCommand(intake));
     NamedCommands.registerCommand("IndexCommand", new IndexCommand(indexer));
     NamedCommands.registerCommand("DeIndexCommand", new DeIndexCommand(indexer));
-    NamedCommands.registerCommand("TimedIndexCommand", new TimedIndexCommand(indexer, swerve, 3, shooter));
+    NamedCommands.registerCommand("TimedIndexCommand", new TimedIndexCommand(indexer, swerve, shooter, intake, 3));
     // MUDAR DEPOIS
     NamedCommands.registerCommand("ClimbCommand", Commands.runOnce(() -> {
       climber.setClimberState(CLIMBER_STATES.DOWN);
@@ -96,7 +96,7 @@ public class RobotContainer {
 
     opController.rightTrigger(0.3).onTrue(new DropIntakeCommand(intake));
     opController.leftTrigger(0.3).onFalse(new InsideIntakeCommand(intake));
-    
+
     driverController.rightTrigger(0.5).onTrue(new MidIntakeCommand(intake));
     driverController.rightTrigger(0.5).onTrue(new DropIntakeCommand(intake)); //perguntar pro enzo
 
